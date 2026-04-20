@@ -1,0 +1,1141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>What Would You Do? | A Game About AI</title>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+<style>
+  /* ============================================================
+     CSS VARIABLES & RESET
+  ============================================================ */
+  :root {
+    --gb-black:   #0f0f0f;
+    --gb-dark:    #1a1a2e;
+    --gb-green1:  #0a3a0a;
+    --gb-green2:  #1a6b1a;
+    --gb-green3:  #4db84d;
+    --gb-green4:  #9dff9d;
+    --gb-yellow:  #f5d742;
+    --gb-orange:  #f08030;
+    --gb-red:     #e83030;
+    --gb-blue:    #3050f8;
+    --gb-lblue:   #60a0f0;
+    --gb-white:   #e8f8e8;
+    --gb-gray:    #888888;
+    --gb-lgray:   #c8c8c8;
+    --pixel: 4px;
+    --font: 'Press Start 2P', monospace;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; image-rendering: pixelated; }
+
+  body {
+    background: var(--gb-black);
+    font-family: var(--font);
+    color: var(--gb-white);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow-x: hidden;
+  }
+
+  /* ============================================================
+     SCANLINE OVERLAY
+  ============================================================ */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(0,0,0,0.15) 2px,
+      rgba(0,0,0,0.15) 4px
+    );
+    pointer-events: none;
+    z-index: 9999;
+  }
+
+  /* ============================================================
+     MAIN CONTAINER — like a Game Boy screen
+  ============================================================ */
+  #app {
+    width: 640px;
+    max-width: 100vw;
+    min-height: 500px;
+    background: var(--gb-dark);
+    border: 4px solid var(--gb-green3);
+    box-shadow:
+      0 0 0 4px var(--gb-black),
+      0 0 0 8px var(--gb-green2),
+      0 0 40px rgba(77,184,77,0.3),
+      inset 0 0 60px rgba(0,0,0,0.4);
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* CRT corner notches */
+  #app::before, #app::after {
+    content: '';
+    position: absolute;
+    width: 16px; height: 16px;
+    background: var(--gb-black);
+    z-index: 10;
+  }
+  #app::before { top: -4px; left: -4px; border-bottom-right-radius: 4px; }
+  #app::after  { bottom: -4px; right: -4px; border-top-left-radius: 4px; }
+
+  /* ============================================================
+     SCREENS (hidden by default, shown via JS)
+  ============================================================ */
+  .screen { display: none; padding: 24px; }
+  .screen.active { display: flex; flex-direction: column; }
+
+  /* ============================================================
+     PIXEL CANVAS (tile background)
+  ============================================================ */
+  canvas#bg-canvas {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 0;
+    opacity: 0.18;
+  }
+
+  .screen-content { position: relative; z-index: 1; width: 100%; }
+
+  /* ============================================================
+     TITLE SCREEN
+  ============================================================ */
+  #screen-title {
+    align-items: center;
+    justify-content: center;
+    min-height: 500px;
+    text-align: center;
+    gap: 0;
+  }
+
+  .title-sprite-area {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    margin-bottom: 8px;
+  }
+
+  .game-title-top {
+    font-size: 10px;
+    color: var(--gb-green4);
+    letter-spacing: 2px;
+    margin-bottom: 4px;
+    text-shadow: 2px 2px 0 var(--gb-green1);
+    animation: blink-slow 3s infinite;
+  }
+  .game-title-main {
+    font-size: 18px;
+    color: var(--gb-yellow);
+    text-shadow: 3px 3px 0 #7a6000, 6px 6px 0 rgba(0,0,0,0.5);
+    line-height: 1.6;
+    margin-bottom: 4px;
+  }
+  .game-title-sub {
+    font-size: 8px;
+    color: var(--gb-green3);
+    margin-bottom: 24px;
+  }
+  .title-divider {
+    width: 100%;
+    height: 4px;
+    background: repeating-linear-gradient(90deg, var(--gb-green3) 0 8px, transparent 8px 16px);
+    margin: 12px 0;
+  }
+  .title-byline {
+    font-size: 7px;
+    color: var(--gb-gray);
+    line-height: 2;
+    margin-bottom: 20px;
+  }
+  .blink-text {
+    font-size: 9px;
+    color: var(--gb-green4);
+    animation: blink 1s step-end infinite;
+  }
+  .title-credit {
+    font-size: 6px;
+    color: var(--gb-gray);
+    margin-top: 16px;
+  }
+
+  /* ============================================================
+     SCENARIO SCREEN
+  ============================================================ */
+  #screen-scenario { min-height: 500px; gap: 0; }
+
+  .hud-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 4px solid var(--gb-green2);
+  }
+  .hud-bar .hud-label {
+    font-size: 7px;
+    color: var(--gb-green3);
+  }
+  .progress-pips {
+    display: flex;
+    gap: 6px;
+  }
+  .pip {
+    width: 12px; height: 12px;
+    border: 2px solid var(--gb-green3);
+    background: transparent;
+  }
+  .pip.filled { background: var(--gb-green4); }
+  .pip.current { background: var(--gb-yellow); border-color: var(--gb-yellow); animation: blink-slow 0.8s infinite; }
+
+  /* Scene canvas area */
+  .scene-canvas-wrap {
+    width: 100%;
+    height: 140px;
+    background: var(--gb-green1);
+    border: 4px solid var(--gb-green2);
+    margin-bottom: 12px;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: flex-end;
+  }
+  canvas.scene-canvas {
+    width: 100%; height: 100%;
+  }
+
+  /* Location badge */
+  .location-badge {
+    position: absolute;
+    top: 6px; right: 6px;
+    background: var(--gb-black);
+    border: 2px solid var(--gb-green3);
+    padding: 4px 6px;
+    font-size: 6px;
+    color: var(--gb-green4);
+    z-index: 2;
+  }
+
+  /* Dialogue box */
+  .dialogue-box {
+    background: var(--gb-black);
+    border: 4px solid var(--gb-green4);
+    padding: 12px;
+    margin-bottom: 14px;
+    position: relative;
+    min-height: 80px;
+  }
+  .dialogue-box::before {
+    content: '';
+    position: absolute;
+    top: -2px; left: -2px; right: -2px; bottom: -2px;
+    border: 2px solid var(--gb-green2);
+    pointer-events: none;
+  }
+  .dialogue-speaker {
+    font-size: 7px;
+    color: var(--gb-yellow);
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .speaker-icon {
+    width: 10px; height: 10px;
+    background: var(--gb-yellow);
+    display: inline-block;
+  }
+  .dialogue-text {
+    font-size: 7px;
+    color: var(--gb-white);
+    line-height: 2;
+  }
+  .scenario-desc {
+    font-size: 7px;
+    color: var(--gb-lgray);
+    line-height: 2;
+    margin-bottom: 10px;
+  }
+
+  /* Choices */
+  .choices-label {
+    font-size: 7px;
+    color: var(--gb-green3);
+    margin-bottom: 8px;
+  }
+  .choices { display: flex; flex-direction: column; gap: 8px; }
+
+  .choice-btn {
+    background: var(--gb-black);
+    border: 3px solid var(--gb-green3);
+    color: var(--gb-white);
+    font-family: var(--font);
+    font-size: 7px;
+    padding: 10px 12px;
+    text-align: left;
+    cursor: pointer;
+    line-height: 1.8;
+    transition: none;
+    position: relative;
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  .choice-btn .choice-arrow {
+    color: var(--gb-green3);
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+  .choice-btn:hover, .choice-btn:focus {
+    background: var(--gb-green1);
+    border-color: var(--gb-green4);
+    color: var(--gb-yellow);
+    outline: none;
+  }
+  .choice-btn:hover .choice-arrow { color: var(--gb-yellow); }
+  .choice-btn:active { transform: translate(2px, 2px); }
+
+  /* ============================================================
+     OUTCOME SCREEN
+  ============================================================ */
+  #screen-outcome { min-height: 500px; justify-content: center; }
+
+  .outcome-header {
+    font-size: 9px;
+    color: var(--gb-yellow);
+    margin-bottom: 12px;
+    text-align: center;
+    text-shadow: 2px 2px 0 #7a6000;
+  }
+  .outcome-scene-label {
+    font-size: 7px;
+    color: var(--gb-green3);
+    margin-bottom: 10px;
+    text-align: center;
+  }
+  .outcome-box {
+    background: var(--gb-black);
+    border: 4px solid var(--gb-orange);
+    padding: 14px;
+    margin-bottom: 16px;
+  }
+  .outcome-text {
+    font-size: 7px;
+    color: var(--gb-white);
+    line-height: 2.2;
+  }
+  .outcome-text em {
+    color: var(--gb-yellow);
+    font-style: normal;
+  }
+  .continue-btn {
+    background: var(--gb-green2);
+    border: 3px solid var(--gb-green4);
+    color: var(--gb-white);
+    font-family: var(--font);
+    font-size: 8px;
+    padding: 12px 20px;
+    cursor: pointer;
+    width: 100%;
+    text-align: center;
+    margin-top: 8px;
+  }
+  .continue-btn:hover { background: var(--gb-green3); color: var(--gb-black); }
+
+  /* ============================================================
+     SCORE SCREEN
+  ============================================================ */
+  #screen-score { min-height: 500px; align-items: center; }
+
+  .score-title {
+    font-size: 12px;
+    color: var(--gb-yellow);
+    text-align: center;
+    margin-bottom: 4px;
+    text-shadow: 2px 2px 0 #7a6000;
+  }
+  .score-subtitle {
+    font-size: 7px;
+    color: var(--gb-green3);
+    text-align: center;
+    margin-bottom: 16px;
+  }
+  .score-breakdown {
+    width: 100%;
+    background: var(--gb-black);
+    border: 3px solid var(--gb-green3);
+    padding: 12px;
+    margin-bottom: 14px;
+  }
+  .score-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 7px;
+    padding: 5px 0;
+    border-bottom: 1px solid var(--gb-green1);
+  }
+  .score-row:last-child { border-bottom: none; }
+  .score-row .scene-name { color: var(--gb-lgray); flex: 1; }
+  .score-row .pts {
+    font-size: 8px;
+    font-weight: bold;
+    min-width: 36px;
+    text-align: right;
+  }
+  .pts.high { color: var(--gb-green4); }
+  .pts.mid  { color: var(--gb-yellow); }
+  .pts.low  { color: var(--gb-red); }
+
+  .score-total-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 12px;
+    background: var(--gb-green1);
+    border: 2px solid var(--gb-green3);
+    margin-bottom: 14px;
+    font-size: 9px;
+  }
+  .score-total-row .total-label { color: var(--gb-green4); }
+  .score-total-row .total-pts   { color: var(--gb-yellow); }
+
+  .ending-box {
+    width: 100%;
+    background: var(--gb-black);
+    border: 4px solid var(--gb-yellow);
+    padding: 14px;
+    margin-bottom: 14px;
+  }
+  .ending-rank {
+    font-size: 9px;
+    color: var(--gb-yellow);
+    text-align: center;
+    margin-bottom: 10px;
+    text-shadow: 2px 2px 0 #7a6000;
+  }
+  .ending-msg {
+    font-size: 7px;
+    color: var(--gb-white);
+    line-height: 2.2;
+    text-align: center;
+  }
+  .ending-ct-line {
+    font-size: 6px;
+    color: var(--gb-green4);
+    text-align: center;
+    margin-top: 10px;
+    line-height: 2;
+  }
+  .play-again-btn {
+    background: var(--gb-blue);
+    border: 3px solid var(--gb-lblue);
+    color: var(--gb-white);
+    font-family: var(--font);
+    font-size: 8px;
+    padding: 12px 20px;
+    cursor: pointer;
+    width: 100%;
+    text-align: center;
+    animation: blink-slow 2s infinite;
+  }
+  .play-again-btn:hover { background: var(--gb-lblue); animation: none; }
+
+  /* ============================================================
+     ANIMATIONS
+  ============================================================ */
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+  }
+  @keyframes blink-slow {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+  }
+  @keyframes slide-in {
+    from { transform: translateY(20px); opacity: 0; }
+    to   { transform: translateY(0); opacity: 1; }
+  }
+  .screen.active .dialogue-box,
+  .screen.active .choices,
+  .screen.active .outcome-box {
+    animation: slide-in 0.25s ease-out;
+  }
+
+  /* Pixel character sprites */
+  .sprite-canvas { image-rendering: pixelated; }
+
+  /* ============================================================
+     TITLE SPRITE
+  ============================================================ */
+  #title-sprite-canvas { image-rendering: pixelated; }
+
+</style>
+</head>
+<body>
+
+<div id="app">
+  <canvas id="bg-canvas"></canvas>
+
+  <!-- ═══════════════════════ TITLE SCREEN ═══════════════════════ -->
+  <div id="screen-title" class="screen active">
+    <div class="screen-content" style="display:flex;flex-direction:column;align-items:center;padding-top:20px;">
+      <div class="title-sprite-area">
+        <canvas id="title-sprite-canvas" width="200" height="80"></canvas>
+      </div>
+      <div class="game-title-top">★ TIMOTHY EDWARDS MS PRESENTS ★</div>
+      <div class="game-title-main">WHAT WOULD<br>YOU DO?</div>
+      <div class="game-title-sub">An AI Choices Game</div>
+      <div class="title-divider"></div>
+      <div class="title-byline">
+        5 SCENARIOS &nbsp;·&nbsp; REAL CONSEQUENCES<br>
+        SOUTH WINDSOR, CONNECTICUT<br>
+        &nbsp;<br>
+        AI CAN HELP — BUT HOW YOU<br>
+        USE IT CHANGES EVERYTHING.
+      </div>
+      <button class="continue-btn blink-text" onclick="startGame()" style="max-width:260px;margin-top:4px;">
+        ▶ PRESS START
+      </button>
+      <div class="title-credit" style="margin-top:16px;">© TIMOTHY EDWARDS MULTIMEDIA PROJECT</div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════ SCENARIO SCREEN ═══════════════════════ -->
+  <div id="screen-scenario" class="screen">
+    <div class="screen-content">
+      <div class="hud-bar">
+        <div class="hud-label" id="hud-scenario-label">SCENARIO 1/5</div>
+        <div class="progress-pips" id="progress-pips"></div>
+        <div class="hud-label" id="hud-title-label">HOMEWORK HELP</div>
+      </div>
+      <div class="scene-canvas-wrap">
+        <canvas class="scene-canvas" id="scene-canvas" width="640" height="140"></canvas>
+        <div class="location-badge" id="location-badge">📍 TEMS LIBRARY</div>
+      </div>
+      <div class="dialogue-box">
+        <div class="dialogue-speaker"><span class="speaker-icon"></span><span id="speaker-name">ALEX</span></div>
+        <div class="dialogue-text" id="dialogue-text">...</div>
+      </div>
+      <div class="scenario-desc" id="scenario-desc"></div>
+      <div class="choices-label">▼ WHAT DO YOU DO?</div>
+      <div class="choices" id="choices-container"></div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════ OUTCOME SCREEN ═══════════════════════ -->
+  <div id="screen-outcome" class="screen">
+    <div class="screen-content">
+      <div class="outcome-header">— RESULT —</div>
+      <div class="outcome-scene-label" id="outcome-scene-label">SCENARIO 1: HOMEWORK HELP</div>
+      <div class="outcome-box">
+        <div class="outcome-text" id="outcome-text"></div>
+      </div>
+      <button class="continue-btn" id="continue-btn" onclick="nextScenario()">▶ CONTINUE</button>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════ SCORE SCREEN ═══════════════════════ -->
+  <div id="screen-score" class="screen">
+    <div class="screen-content">
+      <div class="score-title">GAME OVER</div>
+      <div class="score-subtitle">— YOUR CHOICES —</div>
+      <div class="score-breakdown" id="score-breakdown"></div>
+      <div class="score-total-row">
+        <span class="total-label">TOTAL SCORE</span>
+        <span class="total-pts" id="total-pts-display">0 / 15</span>
+      </div>
+      <div class="ending-box">
+        <div class="ending-rank" id="ending-rank">DIGITAL CITIZEN</div>
+        <div class="ending-msg"  id="ending-msg"></div>
+        <div class="ending-ct-line" id="ending-ct-line"></div>
+      </div>
+      <button class="play-again-btn" onclick="resetGame()">↺ PLAY AGAIN</button>
+    </div>
+  </div>
+
+</div><!-- #app -->
+
+<script>
+/* ================================================================
+   GAME DATA
+   Edit scenario text, choices, and outcomes here easily.
+================================================================ */
+
+const SCENARIOS = [
+  /* ── SCENARIO 1: HOMEWORK HELP ── */
+  {
+    id: 1,
+    title: "HOMEWORK HELP",
+    location: "📍 TEMS LIBRARY",
+    speaker: "ALEX",
+    dialogue: "It's 9 PM. My essay on the American Revolution is due tomorrow. I haven't started. The AI chatbot is right there...",
+    desc: "Alex is a 7th grader at Timothy Edwards Middle School. The essay is worth 20% of the grade.",
+    scene: "library",
+    choices: [
+      {
+        text: "Have the AI write the whole essay. Just paste it in and submit.",
+        points: 0,
+        outcome: `The essay comes back. It's pretty good — maybe too good.\n\nMrs. Kowalski has read thousands of student essays. She flags it immediately: "This doesn't sound like you, Alex."\n\nAlex gets a zero and a note home. Worse, Alex never actually learned about the Revolution.\n\n<em>The shortcut became a detour.</em>`
+      },
+      {
+        text: "Use the AI to brainstorm ideas and outline. Then write it yourself.",
+        points: 3,
+        outcome: `Alex asks the AI: "What are three strong arguments about why the colonists revolted?" It fires back options. Alex picks two, builds an outline, and starts writing.\n\nThe essay isn't perfect, but it's Alex's voice and Alex's thinking.\n\nMrs. Kowalski gives it a B+. "Good structure," she notes. "I can tell you actually engaged with this."\n\n<em>The AI was a scaffold — not the building.</em>`
+      },
+      {
+        text: "Avoid AI entirely. Struggle through it alone until midnight.",
+        points: 1,
+        outcome: `Alex pushes through solo. The essay is a bit disorganized — it's late and Alex is tired.\n\nC+. Not the end of the world, but Alex thinks: "I spent three hours reinventing a wheel someone could've helped me get started on."\n\nAvoiding AI entirely isn't always the noble choice. The tool exists — what matters is <em>how</em> you use it.\n\n<em>Working harder isn't the same as working smarter.</em>`
+      }
+    ]
+  },
+
+  /* ── SCENARIO 2: GROUP PROJECT ── */
+  {
+    id: 2,
+    title: "GROUP PROJECT",
+    location: "📍 TEMS SCIENCE HALL",
+    speaker: "JORDAN",
+    dialogue: "Marcus just sent his 'research section.' I read it and... this is definitely AI. He didn't write a word of this.",
+    desc: "Your group project is due in two days. Everyone else worked hard. Marcus submitted AI-generated text without telling anyone.",
+    scene: "classroom",
+    choices: [
+      {
+        text: "Stay quiet. Use it. The project needs the pages.",
+        points: 0,
+        outcome: `The project gets submitted. It looks impressive.\n\nBut Mr. Adeyemi is thorough. He runs the AI-detection tool the district just rolled out.\n\nThe whole group gets flagged. "I don't think you all wrote this," he says. Everyone — even the people who worked hard — gets a reduced grade.\n\n<em>Silence made you responsible too.</em>`
+      },
+      {
+        text: "Confront Marcus privately. Ask him to redo it or be honest with the teacher.",
+        points: 3,
+        outcome: `It's awkward. Marcus gets defensive at first.\n\n"I was stressed," he admits eventually. "I didn't think it was a big deal."\n\nYou two talk to Mr. Adeyemi together. He appreciates the honesty and gives Marcus a chance to redo his section — this time with real research.\n\nThe final project reflects everyone's actual work.\n\n<em>Accountability is uncomfortable. It's also how trust is built.</em>`
+      },
+      {
+        text: "Delete Marcus's section and tell the group he didn't submit anything.",
+        points: 1,
+        outcome: `You remove his section. The project goes in a bit thin in one area.\n\nMarcus is furious. The group is fractured. And you told a half-truth — not a lie, but not the whole story.\n\nThe project is fine. The friendship isn't.\n\n<em>There was a harder, better path you chose not to take.</em>`
+      }
+    ]
+  },
+
+  /* ── SCENARIO 3: TEST PREP ── */
+  {
+    id: 3,
+    title: "TEST PREP",
+    location: "📍 TEMS STUDY ROOM 4",
+    speaker: "RILEY",
+    dialogue: "The AI tutor keeps asking me questions instead of just telling me the answers. It's honestly kind of annoying.",
+    desc: "Tomorrow is the big Connecticut history test. Riley's teacher set up the AI as a 'Socratic tutor' — it challenges your thinking instead of handing you answers.",
+    scene: "study",
+    choices: [
+      {
+        text: "Switch to a different AI and just copy the practice worksheet answers.",
+        points: 0,
+        outcome: `The worksheet is done in 12 minutes. Riley feels ready.\n\nTest day. The questions are worded differently — they require actual understanding, not just memorized phrases.\n\nRiley blanks on half of them.\n\n"I knew those answers," Riley thinks. But knowing the answer someone else gave you isn't the same as knowing the material.\n\n<em>The shortcut didn't go where you thought it did.</em>`
+      },
+      {
+        text: "Stick with the Socratic tutor. It's frustrating, but keep going.",
+        points: 3,
+        outcome: `"Why do you think the Hartford Convention was controversial?" the AI asks.\n\nRiley has to actually think. Gets it wrong twice. Finally gets it right — and this time it sticks.\n\nTest day. The questions are hard. But Riley recognizes the concepts, because Riley had to wrestle with them the night before.\n\nB+. The teacher says: "I could tell you really prepared."\n\n<em>The friction was the learning.</em>`
+      },
+      {
+        text: "Ask the tutor to just 'go easier' — use it to confirm you already know stuff.",
+        points: 1,
+        outcome: `The tutor adjusts. It's more comfortable now — Riley breezes through.\n\nBut comfortable isn't the same as prepared.\n\nThe test has tougher framing than the easy questions Riley practiced. Score: C.\n\nNot a disaster, but Riley knows: the hard questions from before were there for a reason.\n\n<em>You used the right tool — just with the wrong setting.</em>`
+      }
+    ]
+  },
+
+  /* ── SCENARIO 4: HEALTHCARE ── */
+  {
+    id: 4,
+    title: "GRANDMA'S HEALTH",
+    location: "📍 STAFFORD SPRINGS, CT",
+    speaker: "GRANDMA CHEN",
+    dialogue: "The nearest doctor is 40 miles away. My appointment isn't for three weeks. But something feels wrong.",
+    desc: "Your grandmother lives in rural Stafford Springs, CT. She's having unusual symptoms. The family found an AI symptom checker online.",
+    scene: "rural",
+    choices: [
+      {
+        text: "Rely entirely on the AI diagnosis. It says she's probably fine, so skip the doctor.",
+        points: 0,
+        outcome: `The AI says: "Your symptoms are consistent with mild dehydration."\n\nGrandma Chen drinks more water. Two days later she's in the ER.\n\nThe real issue was a medication interaction — something the AI had no way of knowing without her full medical history.\n\n"The AI was just looking at words," her doctor explains. "I'm looking at her."\n\n<em>AI can suggest. Only a doctor can diagnose.</em>`
+      },
+      {
+        text: "Use the AI to research her symptoms and prepare specific questions for the doctor.",
+        points: 3,
+        outcome: `The family uses the symptom checker to make a list: "What could cause these symptoms together? What should we ask the doctor to rule out?"\n\nThey call the clinic and explain the specific combination of symptoms. The nurse schedules an urgent callback.\n\nThe doctor identifies the issue quickly — partly because the family asked exactly the right questions.\n\n"You came prepared," the doctor says. "That helped a lot."\n\n<em>AI as preparation, not as a replacement.</em>`
+      },
+      {
+        text: "Ignore AI entirely — wait three weeks for the appointment no matter what.",
+        points: 1,
+        outcome: `"Let's just wait for the real doctor," the family decides.\n\nThe three weeks pass. Grandma gets checked out — and it turns out the symptoms were significant. Earlier attention would have caught things sooner.\n\n"You should have called us," the nurse says. "We have a phone line for a reason."\n\nFor rural families, accessing care is hard. Refusing every tool that might help isn't caution — it's a different kind of risk.\n\n<em>The goal isn't avoiding AI. It's using every resource wisely.</em>`
+      }
+    ]
+  },
+
+  /* ── SCENARIO 5: LOCAL BUSINESS ── */
+  {
+    id: 5,
+    title: "MAIN STREET SHOP",
+    location: "📍 SOUTH WINDSOR, CT",
+    speaker: "OWNER MEL",
+    dialogue: "My shop gets 200 emails a week. Half are 'what are your hours?' I can't keep up — but I also can't lose that personal connection.",
+    desc: "Mel owns a hardware store on South Windsor's Main Street. A tech consultant is pitching an AI customer service system.",
+    scene: "shop",
+    choices: [
+      {
+        text: "Use AI for routine questions (hours, location, inventory). Keep Mel for the rest.",
+        points: 3,
+        outcome: `The AI handles 140 of the 200 weekly emails: hours, directions, basic stock questions.\n\nMel now has time to actually respond to the 60 that need a human: the contractor with a tricky custom order, the neighbor who calls every spring about fertilizer.\n\nSales tick up. Customer ratings improve. One longtime customer writes: "Mel finally has time to actually talk to you."\n\n<em>Automation freed the human to be more human.</em>`
+      },
+      {
+        text: "Replace all customer interaction with AI. It's more efficient.",
+        points: 0,
+        outcome: `Every email now gets an AI reply. Fast, accurate, efficient.\n\nBut something changes. People stop feeling like they're talking to Mel's. They're talking to a chatbot.\n\nThe hardware store down the highway has the same prices and a chatbot too. South Windsor shoppers start going there instead.\n\nThe thing that made Mel's special — Mel — has been automated away.\n\n<em>Efficiency is worthless if it deletes your value.</em>`
+      },
+      {
+        text: "Reject AI entirely. Answer everything personally, even if it takes hours.",
+        points: 1,
+        outcome: `Mel spends four hours a day on email. The shop floor suffers. Mel is exhausted.\n\nTwo good employees leave because Mel is too stressed to manage well. A big contractor order gets missed because Mel was buried in "what time do you close?" emails.\n\nNobody said Mel had to answer every email personally to have a personal shop.\n\n<em>Pride in doing it yourself has a cost. Make sure it's worth it.</em>`
+      }
+    ]
+  }
+];
+
+/* ================================================================
+   ENDINGS — based on total score (0–15)
+================================================================ */
+const ENDINGS = [
+  {
+    min: 13,
+    rank: "★★★ DIGITAL NAVIGATOR ★★★",
+    msg: "You used AI the way it's meant to be used — as a tool that amplifies what humans can do, not a replacement for thinking. You caught the shortcuts for what they were. You asked better questions. You made the AI work for you.",
+    ct: "Students like you are why Connecticut educators are optimistic about AI in schools.\nThe future of AI in Connecticut isn't about who has the best chatbot.\nIt's about who knows how to use one wisely."
+  },
+  {
+    min: 9,
+    rank: "★★ GETTING THERE ★★",
+    msg: "You got a lot right. You saw the value in AI tools — but a few times, the easy path looked more tempting than it should have. The difference between a good AI user and a great one is recognizing which shortcuts cost more than they save.",
+    ct: "Connecticut schools like Timothy Edwards are building exactly this kind of judgment.\nKeep practicing — the stakes will only get higher."
+  },
+  {
+    min: 5,
+    rank: "★ RISKY CHOICES ★",
+    msg: "Some of your choices worked out okay. Others led to real consequences — a failed project, a wrong diagnosis, a lost customer base. AI is powerful, and powerful tools have powerful failure modes when misused.",
+    ct: "Here in Connecticut, teachers are worried about students who lean on AI without understanding it.\nYou now know what those teachers are worried about.\nPlay again — you know more than you did."
+  },
+  {
+    min: 0,
+    rank: "⚠ GAME OVER ⚠",
+    msg: "Almost every shortcut led somewhere bad. The essay got flagged. Grandma went to the ER. The shop lost its soul. AI didn't cause those outcomes — the choices did. The tool is only as good as the judgment behind it.",
+    ct: "The argument of this game isn't 'AI is dangerous.'\nIt's: AI used without understanding is.\nPlay again. Connecticut's classrooms are counting on students who get this right."
+  }
+];
+
+/* ================================================================
+   PIXEL ART SCENE RENDERERS
+   Each draws a simple 8-bit scene on the scene canvas
+================================================================ */
+const SCENE_RENDERERS = {
+  library: (ctx, w, h) => {
+    // Dark background
+    ctx.fillStyle = '#0f1a0f'; ctx.fillRect(0,0,w,h);
+    // Floor
+    ctx.fillStyle = '#2a1a0a'; ctx.fillRect(0,h-24,w,24);
+    // Floor tiles
+    ctx.fillStyle = '#3a2a1a';
+    for(let x=0;x<w;x+=32){ ctx.fillRect(x,h-24,2,24); }
+    // Bookshelves
+    const colors = ['#8B3030','#305080','#2a6030','#806020'];
+    for(let s=0;s<4;s++){
+      let sx = 20+s*140;
+      ctx.fillStyle = '#4a3020'; ctx.fillRect(sx,10,100,h-34);
+      for(let row=0;row<4;row++){
+        for(let b=0;b<5;b++){
+          ctx.fillStyle = colors[(s+b+row)%4];
+          ctx.fillRect(sx+4+b*18,14+row*22,14,18);
+          ctx.fillStyle='rgba(0,0,0,0.3)';
+          ctx.fillRect(sx+4+b*18,14+row*22,2,18);
+        }
+      }
+    }
+    // Table
+    ctx.fillStyle = '#6b4a20'; ctx.fillRect(200,h-60,240,12);
+    ctx.fillStyle = '#5a3a10';
+    ctx.fillRect(210,h-48,8,24); ctx.fillRect(420,h-48,8,24);
+    // Laptop (pixel art)
+    ctx.fillStyle = '#1a1a1a'; ctx.fillRect(280,h-80,80,52);
+    ctx.fillStyle = '#0a2a0a'; ctx.fillRect(284,h-76,72,40);
+    ctx.fillStyle = '#1a6b1a'; ctx.fillRect(290,h-70,60,28);
+    // Screen glow
+    ctx.fillStyle = 'rgba(77,184,77,0.3)'; ctx.fillRect(292,h-68,56,24);
+    // Student silhouette
+    drawSilhouette(ctx, 340, h-24, '#2a3a2a');
+  },
+
+  classroom: (ctx, w, h) => {
+    ctx.fillStyle = '#0a1020'; ctx.fillRect(0,0,w,h);
+    // Wall
+    ctx.fillStyle = '#1a2030'; ctx.fillRect(0,0,w,h-30);
+    // Floor
+    ctx.fillStyle = '#2a2010'; ctx.fillRect(0,h-30,w,30);
+    // Chalkboard
+    ctx.fillStyle = '#1a3020'; ctx.fillRect(60,8,520,70);
+    ctx.fillStyle = '#0a2010'; ctx.fillRect(64,12,512,62);
+    // Chalk text (pixels)
+    ctx.fillStyle = 'rgba(200,230,200,0.6)';
+    for(let i=0;i<8;i++){
+      ctx.fillRect(80+i*60, 28, 40, 3);
+      ctx.fillRect(80+i*60, 40, 30, 3);
+      ctx.fillRect(80+i*60, 52, 50, 3);
+    }
+    // Desks
+    for(let d=0;d<3;d++){
+      ctx.fillStyle = '#5a4a20'; ctx.fillRect(80+d*180,h-60,120,10);
+      ctx.fillStyle = '#4a3a10'; ctx.fillRect(90+d*180,h-50,8,20);ctx.fillRect(180+d*180,h-50,8,20);
+      // Silhouette at each desk
+      drawSilhouette(ctx, 145+d*180, h-30, ['#203820','#182818','#2a3020'][d]);
+    }
+  },
+
+  study: (ctx, w, h) => {
+    ctx.fillStyle = '#080f08'; ctx.fillRect(0,0,w,h);
+    // Ceiling light
+    ctx.fillStyle = '#f5d742';
+    ctx.fillRect(290,0,60,8);
+    // Light cone
+    const grad = ctx.createLinearGradient(320,8,320,h);
+    grad.addColorStop(0,'rgba(245,215,66,0.15)');
+    grad.addColorStop(1,'rgba(245,215,66,0)');
+    ctx.fillStyle = grad;
+    ctx.beginPath(); ctx.moveTo(290,8); ctx.lineTo(200,h); ctx.lineTo(440,h); ctx.closePath(); ctx.fill();
+    // Table
+    ctx.fillStyle = '#3a2a10'; ctx.fillRect(140,h-55,360,10);
+    ctx.fillStyle = '#2a1a08'; ctx.fillRect(150,h-45,8,25); ctx.fillRect(482,h-45,8,25);
+    // Books stack
+    ['#8B3030','#305080','#2a6030'].forEach((c,i)=>{
+      ctx.fillStyle=c; ctx.fillRect(160,h-65-i*10,50,10);
+    });
+    // Tablet/device glowing
+    ctx.fillStyle = '#1a1a2a'; ctx.fillRect(280,h-88,120,44);
+    ctx.fillStyle = '#0a2a4a'; ctx.fillRect(284,h-84,112,36);
+    ctx.fillStyle = '#3060f0'; ctx.fillRect(288,h-80,104,28);
+    ctx.fillStyle = 'rgba(48,96,240,0.4)'; ctx.fillRect(290,h-78,100,24);
+    // Silhouette
+    drawSilhouette(ctx, 340, h-30, '#182820');
+  },
+
+  rural: (ctx, w, h) => {
+    // Sky
+    const sky = ctx.createLinearGradient(0,0,0,h*0.6);
+    sky.addColorStop(0,'#080820'); sky.addColorStop(1,'#1a1a40');
+    ctx.fillStyle=sky; ctx.fillRect(0,0,w,h*0.6);
+    // Stars
+    ctx.fillStyle='#e8f8e8';
+    [[40,15],[120,8],[200,20],[350,6],[500,18],[580,10],[620,25]].forEach(([x,y])=>{
+      ctx.fillRect(x,y,2,2);
+    });
+    // Hills
+    ctx.fillStyle='#0a1a0a'; ctx.fillRect(0,h*0.5,w,h*0.5);
+    // House
+    ctx.fillStyle='#2a1a10'; ctx.fillRect(80,h*0.5-50,120,50);
+    ctx.fillStyle='#3a1a0a'; 
+    ctx.beginPath(); ctx.moveTo(70,h*0.5-50); ctx.lineTo(140,h*0.5-90); ctx.lineTo(210,h*0.5-50); ctx.closePath(); ctx.fill();
+    // Window glow
+    ctx.fillStyle='#f5d742'; ctx.fillRect(100,h*0.5-40,30,25);
+    ctx.fillStyle='rgba(245,215,66,0.3)'; ctx.fillRect(90,h*0.5-45,50,35);
+    // Road
+    ctx.fillStyle='#1a1a1a'; ctx.fillRect(0,h-30,w,30);
+    ctx.fillStyle='#f5d742';
+    for(let x=0;x<w;x+=60){ ctx.fillRect(x,h-18,30,4); }
+    // Trees
+    [[340,h*0.5-10],[420,h*0.5-5],[500,h*0.5-15]].forEach(([x,y])=>{
+      ctx.fillStyle='#0a2a0a'; ctx.fillRect(x-4,y,8,30);
+      ctx.fillStyle='#1a4a0a'; ctx.fillRect(x-14,y-20,28,24);
+      ctx.fillStyle='#2a6a0a'; ctx.fillRect(x-10,y-36,20,20);
+    });
+  },
+
+  shop: (ctx, w, h) => {
+    ctx.fillStyle = '#0f0f0f'; ctx.fillRect(0,0,w,h);
+    // Storefront
+    ctx.fillStyle = '#2a1a0a'; ctx.fillRect(40,20,560,h-44);
+    // Sign
+    ctx.fillStyle = '#8B3030'; ctx.fillRect(100,24,440,28);
+    ctx.fillStyle = '#f5d742';
+    // Pixel letters in sign (simplified bars)
+    const letters = [60,100,140,180,220,260,300];
+    letters.forEach(x=>{ ctx.fillRect(x+110,30,20,4); ctx.fillRect(x+110,38,20,4); ctx.fillRect(x+110,46,12,4); });
+    // Window
+    ctx.fillStyle = '#1a2a3a'; ctx.fillRect(80,60,220,h-84);
+    ctx.fillStyle = '#0a1a2a'; ctx.fillRect(84,64,212,h-92);
+    // Shelf products in window
+    ['#8B3030','#305080','#2a6030','#806020','#603080'].forEach((c,i)=>{
+      ctx.fillStyle=c; ctx.fillRect(90+i*40,h-80,28,32);
+      ctx.fillStyle='rgba(255,255,255,0.2)'; ctx.fillRect(90+i*40,h-80,6,32);
+    });
+    // Door
+    ctx.fillStyle = '#3a2a10'; ctx.fillRect(330,70,120,h-84);
+    ctx.fillStyle = '#5a4a20'; ctx.fillRect(340,80,100,h-104);
+    ctx.fillStyle = '#f5d742'; ctx.fillRect(425,h/2-4,8,8);
+    // Computer on counter (right side)
+    ctx.fillStyle = '#2a2a3a'; ctx.fillRect(490,h-90,100,40);
+    ctx.fillStyle = '#1a3a1a'; ctx.fillRect(496,h-86,88,28);
+    ctx.fillStyle='rgba(77,184,77,0.4)'; ctx.fillRect(500,h-82,80,20);
+    // Silhouette behind counter
+    drawSilhouette(ctx, 545, h-30, '#1a1a2a');
+  }
+};
+
+function drawSilhouette(ctx, cx, groundY, color) {
+  // Simple 8-bit person silhouette
+  ctx.fillStyle = color;
+  // Head
+  ctx.fillRect(cx-8, groundY-52, 16, 14);
+  // Body
+  ctx.fillRect(cx-10, groundY-38, 20, 24);
+  // Arms
+  ctx.fillRect(cx-18, groundY-36, 8, 18);
+  ctx.fillRect(cx+10, groundY-36, 8, 18);
+  // Legs
+  ctx.fillRect(cx-9, groundY-14, 8, 14);
+  ctx.fillRect(cx+1, groundY-14, 8, 14);
+}
+
+/* ================================================================
+   TILE BACKGROUND
+================================================================ */
+function drawTileBackground(canvas) {
+  const ctx = canvas.getContext('2d');
+  const w = canvas.width, h = canvas.height;
+  ctx.fillStyle = '#0a1a0a';
+  ctx.fillRect(0,0,w,h);
+  // Grid
+  ctx.strokeStyle = '#1a2a1a';
+  ctx.lineWidth = 1;
+  for(let x=0;x<w;x+=32){ ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,h); ctx.stroke(); }
+  for(let y=0;y<h;y+=32){ ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(w,y); ctx.stroke(); }
+  // Random "dots"
+  ctx.fillStyle = '#1a3a1a';
+  for(let i=0;i<60;i++){
+    ctx.fillRect(Math.floor(Math.random()*w/4)*4, Math.floor(Math.random()*h/4)*4, 4, 4);
+  }
+}
+
+/* ================================================================
+   TITLE SPRITE
+================================================================ */
+function drawTitleSprite(canvas) {
+  const ctx = canvas.getContext('2d');
+  const w=200, h=80;
+  // Robot character
+  const r = [
+    [0,0,1,1,1,1,0,0],
+    [0,1,1,1,1,1,1,0],
+    [1,1,0,1,1,0,1,1],
+    [1,1,1,1,1,1,1,1],
+    [0,1,0,1,1,0,1,0],
+    [0,1,1,1,1,1,1,0],
+    [0,1,0,0,0,0,1,0],
+    [0,1,1,0,0,1,1,0],
+  ];
+  const p = 6;
+  r.forEach((row,y)=>{
+    row.forEach((px,x)=>{
+      if(px){
+        ctx.fillStyle = x===2||x===5 ? '#f5d742' : '#4db84d';
+        ctx.fillRect(60+x*p, y*p+4, p-1, p-1);
+      }
+    });
+  });
+  // Student
+  const s=[
+    [0,0,1,1,0,0],
+    [0,1,1,1,1,0],
+    [0,1,0,0,1,0],
+    [0,1,1,1,1,0],
+    [0,0,1,1,0,0],
+    [0,1,1,1,1,0],
+    [0,0,1,1,0,0],
+    [0,0,1,1,0,0],
+  ];
+  s.forEach((row,y)=>{
+    row.forEach((px,x)=>{
+      if(px){
+        ctx.fillStyle = '#e8f8e8';
+        ctx.fillRect(116+x*p, y*p+4, p-1, p-1);
+      }
+    });
+  });
+  // Arrow between
+  ctx.fillStyle='#f5d742';
+  ctx.fillRect(100,34,6,6); ctx.fillRect(106,36,4,2); ctx.fillRect(110,34,6,6);
+
+  // Label under
+  ctx.fillStyle='#4db84d';
+  ctx.font='7px "Press Start 2P", monospace';
+  ctx.fillText('AI', 72, 76);
+  ctx.fillStyle='#e8f8e8';
+  ctx.fillText('YOU', 118, 76);
+}
+
+/* ================================================================
+   GAME STATE
+================================================================ */
+let state = {
+  currentScenario: 0,
+  scores: [],
+  choicesMade: []
+};
+
+/* ================================================================
+   SCREEN MANAGEMENT
+================================================================ */
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-' + id).classList.add('active');
+}
+
+/* ================================================================
+   INIT
+================================================================ */
+window.onload = function() {
+  // Tile background
+  const bgCanvas = document.getElementById('bg-canvas');
+  bgCanvas.width = 640; bgCanvas.height = 600;
+  drawTileBackground(bgCanvas);
+
+  // Title sprite
+  const ts = document.getElementById('title-sprite-canvas');
+  drawTitleSprite(ts);
+
+  showScreen('title');
+};
+
+/* ================================================================
+   GAME FLOW
+================================================================ */
+function startGame() {
+  state = { currentScenario: 0, scores: [], choicesMade: [] };
+  loadScenario(0);
+}
+
+function loadScenario(idx) {
+  const s = SCENARIOS[idx];
+
+  // HUD
+  document.getElementById('hud-scenario-label').textContent = `SCENARIO ${idx+1}/5`;
+  document.getElementById('hud-title-label').textContent = s.title;
+  document.getElementById('location-badge').textContent = s.location;
+  document.getElementById('speaker-name').textContent = s.speaker;
+  document.getElementById('dialogue-text').textContent = s.dialogue;
+  document.getElementById('scenario-desc').textContent = s.desc;
+
+  // Progress pips
+  const pips = document.getElementById('progress-pips');
+  pips.innerHTML = '';
+  for(let i=0;i<5;i++){
+    const pip = document.createElement('div');
+    pip.className = 'pip' + (i < idx ? ' filled' : i === idx ? ' current' : '');
+    pips.appendChild(pip);
+  }
+
+  // Scene canvas
+  const sceneCanvas = document.getElementById('scene-canvas');
+  sceneCanvas.width = 640; sceneCanvas.height = 140;
+  const ctx = sceneCanvas.getContext('2d');
+  SCENE_RENDERERS[s.scene](ctx, 640, 140);
+
+  // Choices
+  const container = document.getElementById('choices-container');
+  container.innerHTML = '';
+  s.choices.forEach((choice, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'choice-btn';
+    btn.innerHTML = `<span class="choice-arrow">▶</span><span>${choice.text}</span>`;
+    btn.onclick = () => makeChoice(idx, i);
+    container.appendChild(btn);
+  });
+
+  showScreen('scenario');
+}
+
+function makeChoice(scenarioIdx, choiceIdx) {
+  const scenario = SCENARIOS[scenarioIdx];
+  const choice = scenario.choices[choiceIdx];
+
+  state.scores.push(choice.points);
+  state.choicesMade.push(choiceIdx);
+
+  // Show outcome
+  document.getElementById('outcome-scene-label').textContent = `SCENARIO ${scenarioIdx+1}: ${scenario.title}`;
+  document.getElementById('outcome-text').innerHTML = choice.outcome.replace(/\n/g,'<br>');
+
+  const continueBtn = document.getElementById('continue-btn');
+  if(scenarioIdx === SCENARIOS.length - 1) {
+    continueBtn.textContent = '▶ SEE FINAL SCORE';
+  } else {
+    continueBtn.textContent = '▶ CONTINUE';
+  }
+
+  showScreen('outcome');
+}
+
+function nextScenario() {
+  const next = state.currentScenario + 1;
+  state.currentScenario = next;
+
+  if(next >= SCENARIOS.length) {
+    showScore();
+  } else {
+    loadScenario(next);
+  }
+}
+
+/* ================================================================
+   SCORE SCREEN
+================================================================ */
+function showScore() {
+  const total = state.scores.reduce((a,b) => a+b, 0);
+  const maxScore = SCENARIOS.length * 3;
+
+  // Breakdown
+  const breakdown = document.getElementById('score-breakdown');
+  breakdown.innerHTML = '';
+  SCENARIOS.forEach((s, i) => {
+    const pts = state.scores[i] || 0;
+    const row = document.createElement('div');
+    row.className = 'score-row';
+    const ptClass = pts === 3 ? 'high' : pts === 1 ? 'mid' : 'low';
+    const ptLabel = pts === 3 ? '★ 3 PTS' : pts === 1 ? '◆ 1 PT' : '✗ 0 PTS';
+    row.innerHTML = `<span class="scene-name">${i+1}. ${s.title}</span><span class="pts ${ptClass}">${ptLabel}</span>`;
+    breakdown.appendChild(row);
+  });
+
+  document.getElementById('total-pts-display').textContent = `${total} / ${maxScore}`;
+
+  // Ending
+  const ending = ENDINGS.find(e => total >= e.min);
+  document.getElementById('ending-rank').textContent = ending.rank;
+  document.getElementById('ending-msg').textContent  = ending.msg;
+  document.getElementById('ending-ct-line').textContent = ending.ct;
+
+  showScreen('score');
+}
+
+function resetGame() {
+  showScreen('title');
+}
+</script>
+</body>
+</html>
