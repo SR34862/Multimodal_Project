@@ -27,9 +27,9 @@
     --pixel: 4px;
     --font: 'Press Start 2P', monospace;
   }
-
+ 
   * { box-sizing: border-box; margin: 0; padding: 0; image-rendering: pixelated; }
-
+ 
   body {
     background: var(--gb-black);
     font-family: var(--font);
@@ -40,7 +40,7 @@
     justify-content: center;
     overflow-x: hidden;
   }
-
+ 
   /* ============================================================
      SCANLINE OVERLAY
   ============================================================ */
@@ -58,7 +58,7 @@
     pointer-events: none;
     z-index: 9999;
   }
-
+ 
   /* ============================================================
      MAIN CONTAINER — like a Game Boy screen
   ============================================================ */
@@ -76,7 +76,7 @@
     position: relative;
     overflow: hidden;
   }
-
+ 
   /* CRT corner notches */
   #app::before, #app::after {
     content: '';
@@ -87,13 +87,13 @@
   }
   #app::before { top: -4px; left: -4px; border-bottom-right-radius: 4px; }
   #app::after  { bottom: -4px; right: -4px; border-top-left-radius: 4px; }
-
+ 
   /* ============================================================
      SCREENS (hidden by default, shown via JS)
   ============================================================ */
   .screen { display: none; padding: 24px; }
   .screen.active { display: flex; flex-direction: column; }
-
+ 
   /* ============================================================
      PIXEL CANVAS (tile background)
   ============================================================ */
@@ -104,9 +104,9 @@
     z-index: 0;
     opacity: 0.18;
   }
-
+ 
   .screen-content { position: relative; z-index: 1; width: 100%; }
-
+ 
   /* ============================================================
      TITLE SCREEN
   ============================================================ */
@@ -117,14 +117,14 @@
     text-align: center;
     gap: 0;
   }
-
+ 
   .title-sprite-area {
     width: 100%;
     display: flex;
     justify-content: center;
     margin-bottom: 8px;
   }
-
+ 
   .game-title-top {
     font-size: 10px;
     color: var(--gb-green4);
@@ -167,12 +167,12 @@
     color: var(--gb-gray);
     margin-top: 16px;
   }
-
+ 
   /* ============================================================
      SCENARIO SCREEN
   ============================================================ */
   #screen-scenario { min-height: 500px; gap: 0; }
-
+ 
   .hud-bar {
     display: flex;
     justify-content: space-between;
@@ -196,14 +196,14 @@
   }
   .pip.filled { background: var(--gb-green4); }
   .pip.current { background: var(--gb-yellow); border-color: var(--gb-yellow); animation: blink-slow 0.8s infinite; }
-
+ 
   /* Scene canvas area */
   .scene-canvas-wrap {
     width: 100%;
-    height: 140px;
+    height: 110px;
     background: var(--gb-green1);
     border: 4px solid var(--gb-green2);
-    margin-bottom: 12px;
+    margin-bottom: 10px;
     position: relative;
     overflow: hidden;
     display: flex;
@@ -212,78 +212,100 @@
   canvas.scene-canvas {
     width: 100%; height: 100%;
   }
-
+ 
   /* Location badge */
   .location-badge {
     position: absolute;
-    top: 6px; right: 6px;
+    top: 5px; left: 5px;
     background: var(--gb-black);
     border: 2px solid var(--gb-green3);
-    padding: 4px 6px;
+    padding: 3px 6px;
     font-size: 6px;
     color: var(--gb-green4);
     z-index: 2;
   }
-
+ 
   /* Dialogue box */
   .dialogue-box {
-    background: var(--gb-black);
+    background: #050f05;
     border: 4px solid var(--gb-green4);
-    padding: 12px;
-    margin-bottom: 14px;
+    padding: 10px 12px 12px;
+    margin-bottom: 10px;
     position: relative;
-    min-height: 80px;
   }
+  /* inner pixel-art corner squares */
   .dialogue-box::before {
     content: '';
     position: absolute;
-    top: -2px; left: -2px; right: -2px; bottom: -2px;
-    border: 2px solid var(--gb-green2);
+    top: 2px; left: 2px; right: 2px; bottom: 2px;
+    border: 1px solid var(--gb-green2);
     pointer-events: none;
   }
   .dialogue-speaker {
     font-size: 7px;
     color: var(--gb-yellow);
-    margin-bottom: 8px;
+    margin-bottom: 6px;
     display: flex;
     align-items: center;
     gap: 6px;
+    border-bottom: 2px solid var(--gb-green1);
+    padding-bottom: 5px;
   }
   .speaker-icon {
-    width: 10px; height: 10px;
+    width: 8px; height: 8px;
     background: var(--gb-yellow);
     display: inline-block;
+    flex-shrink: 0;
+  }
+  /* Context line above dialogue */
+  .scenario-context {
+    font-size: 6px;
+    color: var(--gb-green3);
+    line-height: 1.9;
+    margin-bottom: 6px;
+    padding: 5px 6px;
+    background: rgba(10,58,10,0.5);
+    border-left: 3px solid var(--gb-green2);
   }
   .dialogue-text {
     font-size: 7px;
     color: var(--gb-white);
-    line-height: 2;
+    line-height: 2.1;
   }
-  .scenario-desc {
-    font-size: 7px;
-    color: var(--gb-lgray);
-    line-height: 2;
-    margin-bottom: 10px;
+  /* Secondary speaker exchange */
+  .dialogue-exchange {
+    margin-top: 8px;
+    padding-top: 7px;
+    border-top: 1px dashed var(--gb-green2);
   }
-
+  .dialogue-exchange .exch-line {
+    font-size: 6px;
+    line-height: 2;
+    margin-bottom: 2px;
+  }
+  .exch-line.speaker-a { color: var(--gb-yellow); }
+  .exch-line.speaker-b { color: var(--gb-lblue); }
+  .exch-line.narrator  { color: var(--gb-lgray); font-style: italic; }
+ 
   /* Choices */
   .choices-label {
-    font-size: 7px;
+    font-size: 6px;
     color: var(--gb-green3);
-    margin-bottom: 8px;
+    margin-bottom: 6px;
+    letter-spacing: 1px;
   }
-  .choices { display: flex; flex-direction: column; gap: 8px; }
-
+  .choices { display: flex; flex-direction: column; gap: 6px; }
+ 
   .choice-btn {
-    background: var(--gb-black);
+    background: #050f05;
     border: 3px solid var(--gb-green3);
-    color: var(--gb-white);
+    color: var(--gb-lgray);
     font-family: var(--font);
-    font-size: 7px;
-    padding: 10px 12px;
+    font-size: 6px;
+    padding: 9px 10px;
     text-align: left;
     cursor: pointer;
-    line-height: 1.8;
+    line-height: 2;
     transition: none;
     position: relative;
     display: flex;
@@ -293,22 +315,23 @@
   .choice-btn .choice-arrow {
     color: var(--gb-green3);
     flex-shrink: 0;
-    margin-top: 1px;
+    font-size: 8px;
+    margin-top: 2px;
   }
   .choice-btn:hover, .choice-btn:focus {
     background: var(--gb-green1);
     border-color: var(--gb-green4);
-    color: var(--gb-yellow);
+    color: var(--gb-white);
     outline: none;
   }
   .choice-btn:hover .choice-arrow { color: var(--gb-yellow); }
   .choice-btn:active { transform: translate(2px, 2px); }
-
+ 
   /* ============================================================
      OUTCOME SCREEN
   ============================================================ */
   #screen-outcome { min-height: 500px; justify-content: center; }
-
+ 
   .outcome-header {
     font-size: 9px;
     color: var(--gb-yellow);
@@ -329,13 +352,16 @@
     margin-bottom: 16px;
   }
   .outcome-text {
-    font-size: 7px;
-    color: var(--gb-white);
-    line-height: 2.2;
+    font-size: 6px;
+    color: var(--gb-lgray);
+    line-height: 2.4;
   }
   .outcome-text em {
     color: var(--gb-yellow);
     font-style: normal;
+    display: block;
+    margin-top: 8px;
+    font-size: 7px;
   }
   .continue-btn {
     background: var(--gb-green2);
@@ -350,12 +376,12 @@
     margin-top: 8px;
   }
   .continue-btn:hover { background: var(--gb-green3); color: var(--gb-black); }
-
+ 
   /* ============================================================
      SCORE SCREEN
   ============================================================ */
   #screen-score { min-height: 500px; align-items: center; }
-
+ 
   .score-title {
     font-size: 12px;
     color: var(--gb-yellow);
@@ -395,7 +421,7 @@
   .pts.high { color: var(--gb-green4); }
   .pts.mid  { color: var(--gb-yellow); }
   .pts.low  { color: var(--gb-red); }
-
+ 
   .score-total-row {
     display: flex;
     justify-content: space-between;
@@ -407,7 +433,7 @@
   }
   .score-total-row .total-label { color: var(--gb-green4); }
   .score-total-row .total-pts   { color: var(--gb-yellow); }
-
+ 
   .ending-box {
     width: 100%;
     background: var(--gb-black);
@@ -448,7 +474,7 @@
     animation: blink-slow 2s infinite;
   }
   .play-again-btn:hover { background: var(--gb-lblue); animation: none; }
-
+ 
   /* ============================================================
      ANIMATIONS
   ============================================================ */
@@ -469,22 +495,22 @@
   .screen.active .outcome-box {
     animation: slide-in 0.25s ease-out;
   }
-
+ 
   /* Pixel character sprites */
   .sprite-canvas { image-rendering: pixelated; }
-
+ 
   /* ============================================================
      TITLE SPRITE
   ============================================================ */
   #title-sprite-canvas { image-rendering: pixelated; }
-
+ 
 </style>
 </head>
 <body>
-
+ 
 <div id="app">
   <canvas id="bg-canvas"></canvas>
-
+ 
   <!-- ═══════════════════════ TITLE SCREEN ═══════════════════════ -->
   <div id="screen-title" class="screen active">
     <div class="screen-content" style="display:flex;flex-direction:column;align-items:center;padding-top:20px;">
@@ -508,7 +534,7 @@
       <div class="title-credit" style="margin-top:16px;">© TIMOTHY EDWARDS MULTIMEDIA PROJECT</div>
     </div>
   </div>
-
+ 
   <!-- ═══════════════════════ SCENARIO SCREEN ═══════════════════════ -->
   <div id="screen-scenario" class="screen">
     <div class="screen-content">
@@ -518,19 +544,20 @@
         <div class="hud-label" id="hud-title-label">HOMEWORK HELP</div>
       </div>
       <div class="scene-canvas-wrap">
-        <canvas class="scene-canvas" id="scene-canvas" width="640" height="140"></canvas>
+        <canvas class="scene-canvas" id="scene-canvas" width="640" height="110"></canvas>
         <div class="location-badge" id="location-badge">📍 TEMS LIBRARY</div>
       </div>
       <div class="dialogue-box">
+        <div class="scenario-context" id="scenario-context"></div>
         <div class="dialogue-speaker"><span class="speaker-icon"></span><span id="speaker-name">ALEX</span></div>
         <div class="dialogue-text" id="dialogue-text">...</div>
+        <div class="dialogue-exchange" id="dialogue-exchange"></div>
       </div>
-      <div class="scenario-desc" id="scenario-desc"></div>
       <div class="choices-label">▼ WHAT DO YOU DO?</div>
       <div class="choices" id="choices-container"></div>
     </div>
   </div>
-
+ 
   <!-- ═══════════════════════ OUTCOME SCREEN ═══════════════════════ -->
   <div id="screen-outcome" class="screen">
     <div class="screen-content">
@@ -542,7 +569,7 @@
       <button class="continue-btn" id="continue-btn" onclick="nextScenario()">▶ CONTINUE</button>
     </div>
   </div>
-
+ 
   <!-- ═══════════════════════ SCORE SCREEN ═══════════════════════ -->
   <div id="screen-score" class="screen">
     <div class="screen-content">
@@ -561,15 +588,15 @@
       <button class="play-again-btn" onclick="resetGame()">↺ PLAY AGAIN</button>
     </div>
   </div>
-
+ 
 </div><!-- #app -->
-
+ 
 <script>
 /* ================================================================
    GAME DATA
    Edit scenario text, choices, and outcomes here easily.
 ================================================================ */
-
+ 
 const SCENARIOS = [
   /* ── SCENARIO 1: HOMEWORK HELP ── */
   {
@@ -577,141 +604,170 @@ const SCENARIOS = [
     title: "HOMEWORK HELP",
     location: "📍 TEMS LIBRARY",
     speaker: "ALEX",
-    dialogue: "It's 9 PM. My essay on the American Revolution is due tomorrow. I haven't started. The AI chatbot is right there...",
-    desc: "Alex is a 7th grader at Timothy Edwards Middle School. The essay is worth 20% of the grade.",
+    context: "7th grade, Timothy Edwards Middle School. 9:14 PM. Essay due tomorrow.",
+    dialogue: "Okay. American Revolution essay. 500 words. Due at 8 AM. I've got Magic School open on one tab and a blank doc on the other.",
+    exchange: [
+      { type: "b", who: "FRIEND (text)", line: "just use it to write the whole thing lol" },
+      { type: "a", who: "ALEX", line: "...but Mr. Duclos literally told us today that's not the point." },
+      { type: "narrator", line: "The cursor blinks. What do you do?" }
+    ],
     scene: "library",
     choices: [
       {
-        text: "Have the AI write the whole essay. Just paste it in and submit.",
+        text: "Tell Magic School: 'Write me a 500-word essay on the American Revolution.' Copy. Paste. Submit.",
         points: 0,
-        outcome: `The essay comes back. It's pretty good — maybe too good.\n\nMrs. Kowalski has read thousands of student essays. She flags it immediately: "This doesn't sound like you, Alex."\n\nAlex gets a zero and a note home. Worse, Alex never actually learned about the Revolution.\n\n<em>The shortcut became a detour.</em>`
+        outcome: `The essay comes back polished. Confident. Maybe a little too confident for a 7th grader.\n\nMrs. Kowalski has read thousands of student essays. She flags it the next morning: "This doesn't sound like you, Alex. At all."\n\nAlex gets a zero. A note goes home. And Alex never actually learned anything about the Revolution.\n\n<em>The shortcut became the longest route.</em>`
       },
       {
-        text: "Use the AI to brainstorm ideas and outline. Then write it yourself.",
+        text: "Use Magic School to brainstorm three arguments, build an outline, then write it yourself.",
         points: 3,
-        outcome: `Alex asks the AI: "What are three strong arguments about why the colonists revolted?" It fires back options. Alex picks two, builds an outline, and starts writing.\n\nThe essay isn't perfect, but it's Alex's voice and Alex's thinking.\n\nMrs. Kowalski gives it a B+. "Good structure," she notes. "I can tell you actually engaged with this."\n\n<em>The AI was a scaffold — not the building.</em>`
+        outcome: `Alex types: "Give me three reasons the colonists had for revolting. Don't write the essay — just give me ideas to work with."\n\nMagic School fires back options. Alex picks two, sketches an outline, and starts writing in their own words.\n\nIt takes until 11 PM. The essay isn't perfect — but it's Alex's voice and Alex's thinking.\n\nMrs. Kowalski gives it a B+. "Good structure. I can tell you actually engaged with this material."\n\n<em>The AI was a scaffold — not the building.</em>`
       },
       {
-        text: "Avoid AI entirely. Struggle through it alone until midnight.",
+        text: "Close the laptop. Push through it completely alone until midnight.",
         points: 1,
-        outcome: `Alex pushes through solo. The essay is a bit disorganized — it's late and Alex is tired.\n\nC+. Not the end of the world, but Alex thinks: "I spent three hours reinventing a wheel someone could've helped me get started on."\n\nAvoiding AI entirely isn't always the noble choice. The tool exists — what matters is <em>how</em> you use it.\n\n<em>Working harder isn't the same as working smarter.</em>`
+        outcome: `Alex goes it alone. Three hours later: a tired, disorganized C+ essay.\n\nOn the bus the next morning, Alex thinks: "I could've used the AI just to get unstuck on the intro. That would've been fine, right?"\n\nMr. Duclos once said: "The tool exists. The question is whether you're using it to think, or using it to avoid thinking."\n\nAvoiding AI entirely isn't automatically the honest choice. Sometimes it's just a harder version of the same mistake.\n\n<em>Working harder isn't the same as working smarter.</em>`
       }
     ]
   },
-
+ 
   /* ── SCENARIO 2: GROUP PROJECT ── */
   {
     id: 2,
     title: "GROUP PROJECT",
     location: "📍 TEMS SCIENCE HALL",
     speaker: "JORDAN",
-    dialogue: "Marcus just sent his 'research section.' I read it and... this is definitely AI. He didn't write a word of this.",
-    desc: "Your group project is due in two days. Everyone else worked hard. Marcus submitted AI-generated text without telling anyone.",
+    context: "Group project due in 2 days. Marcus just sent his research section over group chat.",
+    dialogue: "I'm reading Marcus's section and... this is definitely AI. Like, word-for-word ChatGPT. He didn't write a single sentence.",
+    exchange: [
+      { type: "narrator", line: "Everyone else spent their weekend on this." },
+      { type: "b", who: "PRIYA", line: "Does it matter? It looks fine. Just use it." },
+      { type: "a", who: "JORDAN", line: "It matters to me. And it'll matter to Mr. Adeyemi." },
+      { type: "narrator", line: "The group is waiting for you to decide." }
+    ],
     scene: "classroom",
     choices: [
       {
-        text: "Stay quiet. Use it. The project needs the pages.",
+        text: "Stay quiet. Include it. The project needs the pages.",
         points: 0,
-        outcome: `The project gets submitted. It looks impressive.\n\nBut Mr. Adeyemi is thorough. He runs the AI-detection tool the district just rolled out.\n\nThe whole group gets flagged. "I don't think you all wrote this," he says. Everyone — even the people who worked hard — gets a reduced grade.\n\n<em>Silence made you responsible too.</em>`
+        outcome: `The project gets submitted. It looks solid.\n\nBut Mr. Adeyemi uses the district's AI-detection tool — the same one South Windsor rolled out this year alongside Magic School.\n\n"I don't think everyone wrote this," he says. The whole group gets flagged. Reduced grades across the board — even for the people who worked hard.\n\nMarcus shrugs. Jordan is furious.\n\n<em>Silence made you responsible too.</em>`
       },
       {
-        text: "Confront Marcus privately. Ask him to redo it or be honest with the teacher.",
+        text: "Text Marcus privately: redo it yourself, or we tell the teacher together.",
         points: 3,
-        outcome: `It's awkward. Marcus gets defensive at first.\n\n"I was stressed," he admits eventually. "I didn't think it was a big deal."\n\nYou two talk to Mr. Adeyemi together. He appreciates the honesty and gives Marcus a chance to redo his section — this time with real research.\n\nThe final project reflects everyone's actual work.\n\n<em>Accountability is uncomfortable. It's also how trust is built.</em>`
+        outcome: `Marcus gets defensive at first. "It's not a big deal. Everyone does it."\n\n"South Windsor literally has a whole AI policy now," Jordan says. "If this gets flagged it takes all of us down."\n\nMarcus goes quiet. Then: "Fine. I'll rewrite it tonight. For real this time."\n\nYou two go to Mr. Adeyemi anyway — just to be upfront. He appreciates it. Marcus gets a short extension and rewrites the section.\n\nThe final project reflects what everyone actually did.\n\n<em>Accountability is uncomfortable. It's also how trust works.</em>`
       },
       {
-        text: "Delete Marcus's section and tell the group he didn't submit anything.",
+        text: "Delete Marcus's section. Tell the group he never submitted anything.",
         points: 1,
-        outcome: `You remove his section. The project goes in a bit thin in one area.\n\nMarcus is furious. The group is fractured. And you told a half-truth — not a lie, but not the whole story.\n\nThe project is fine. The friendship isn't.\n\n<em>There was a harder, better path you chose not to take.</em>`
+        outcome: `You pull the section. The project goes in thin in one area.\n\nMarcus finds out and is furious. The group is fractured for weeks.\n\nAnd you told a half-truth — Marcus's name was never on it, technically. But you erased someone's work, even bad work, without telling them.\n\nThe project is fine. The group isn't.\n\n<em>There was a harder, more honest path you chose not to take.</em>`
       }
     ]
   },
-
+ 
   /* ── SCENARIO 3: TEST PREP ── */
   {
     id: 3,
     title: "TEST PREP",
     location: "📍 TEMS STUDY ROOM 4",
     speaker: "RILEY",
-    dialogue: "The AI tutor keeps asking me questions instead of just telling me the answers. It's honestly kind of annoying.",
-    desc: "Tomorrow is the big Connecticut history test. Riley's teacher set up the AI as a 'Socratic tutor' — it challenges your thinking instead of handing you answers.",
+    context: "Connecticut history test tomorrow. Teacher set up Magic Student as a tutor for tonight.",
+    dialogue: "This Magic Student thing keeps asking me questions back instead of just telling me the answers. 'Why do YOU think the Hartford Convention mattered?' I don't KNOW, that's why I'm asking.",
+    exchange: [
+      { type: "narrator", line: "The teacher's instructions: 'Use it as a tutor, not a cheat sheet.'" },
+      { type: "b", who: "MAGIC STUDENT", line: "What do you already know about the convention? Start there." },
+      { type: "a", who: "RILEY", line: "I know I'm going to fail this test if it doesn't just tell me." },
+      { type: "narrator", line: "There's a regular AI tab open in the next window." }
+    ],
     scene: "study",
     choices: [
       {
-        text: "Switch to a different AI and just copy the practice worksheet answers.",
+        text: "Switch to a regular AI. Copy all the practice worksheet answers and call it done.",
         points: 0,
-        outcome: `The worksheet is done in 12 minutes. Riley feels ready.\n\nTest day. The questions are worded differently — they require actual understanding, not just memorized phrases.\n\nRiley blanks on half of them.\n\n"I knew those answers," Riley thinks. But knowing the answer someone else gave you isn't the same as knowing the material.\n\n<em>The shortcut didn't go where you thought it did.</em>`
+        outcome: `Twelve minutes. Done. Riley feels ready.\n\nTest day. The questions are worded differently from the worksheet — they need actual understanding.\n\nRiley blanks on question after question. "I knew these," Riley thinks.\n\nBut Riley knew the answers someone else figured out. That's different from knowing the material.\n\nMr. Duclos once described Magic Student's approach as making students "think out loud until it sticks." Riley bypassed exactly that.\n\n<em>The shortcut didn't go where Riley thought it did.</em>`
       },
       {
-        text: "Stick with the Socratic tutor. It's frustrating, but keep going.",
+        text: "Stay with Magic Student. It's annoying, but push through the questions.",
         points: 3,
-        outcome: `"Why do you think the Hartford Convention was controversial?" the AI asks.\n\nRiley has to actually think. Gets it wrong twice. Finally gets it right — and this time it sticks.\n\nTest day. The questions are hard. But Riley recognizes the concepts, because Riley had to wrestle with them the night before.\n\nB+. The teacher says: "I could tell you really prepared."\n\n<em>The friction was the learning.</em>`
+        outcome: `"Okay — the Hartford Convention. Colonists were upset about the War of 1812..."\n\n"Close," Magic Student replies. "But which colonists, and what exactly were they threatening?"\n\nRiley gets it wrong twice. Gets it right the third time. And this time it sticks — because Riley had to actually retrieve it.\n\nTest day. The questions are hard, but Riley recognizes the concepts.\n\nB+. The teacher writes in the margin: "Strong analysis."\n\nThat's the thing about the Socratic approach: the friction is the learning.\n\n<em>The frustration was the point.</em>`
       },
       {
-        text: "Ask the tutor to just 'go easier' — use it to confirm you already know stuff.",
+        text: "Tell Magic Student to go easier — use it to confirm what you already know.",
         points: 1,
-        outcome: `The tutor adjusts. It's more comfortable now — Riley breezes through.\n\nBut comfortable isn't the same as prepared.\n\nThe test has tougher framing than the easy questions Riley practiced. Score: C.\n\nNot a disaster, but Riley knows: the hard questions from before were there for a reason.\n\n<em>You used the right tool — just with the wrong setting.</em>`
+        outcome: `The tutor backs off. Riley breezes through the easier questions.\n\nComfortable. But not prepared.\n\nThe test has harder framing than the easy warmups Riley practiced on. Score: C.\n\nNot a disaster. But Riley knows: the annoying hard questions from before weren't random. They were the ones that were going to be on the test.\n\n<em>Right tool. Wrong setting.</em>`
       }
     ]
   },
-
+ 
   /* ── SCENARIO 4: HEALTHCARE ── */
   {
     id: 4,
     title: "GRANDMA'S HEALTH",
     location: "📍 STAFFORD SPRINGS, CT",
     speaker: "GRANDMA CHEN",
-    dialogue: "The nearest doctor is 40 miles away. My appointment isn't for three weeks. But something feels wrong.",
-    desc: "Your grandmother lives in rural Stafford Springs, CT. She's having unusual symptoms. The family found an AI symptom checker online.",
+    context: "Rural Tolland County. Nearest specialist: 42 miles. Next appointment: 3 weeks out.",
+    dialogue: "I don't want to make a fuss. It's probably nothing. But my stomach has felt wrong for four days and I can't sleep.",
+    exchange: [
+      { type: "narrator", line: "You open an AI symptom checker. It asks for her symptoms and age." },
+      { type: "b", who: "AI CHECKER", line: "Based on your input: likely mild indigestion or stress." },
+      { type: "a", who: "YOU", line: "See? It's probably fine." },
+      { type: "narrator", line: "Grandma Chen doesn't look convinced. Neither do you, honestly." }
+    ],
     scene: "rural",
     choices: [
       {
-        text: "Rely entirely on the AI diagnosis. It says she's probably fine, so skip the doctor.",
+        text: "Trust the AI result. It says she's probably fine — no need to call the clinic.",
         points: 0,
-        outcome: `The AI says: "Your symptoms are consistent with mild dehydration."\n\nGrandma Chen drinks more water. Two days later she's in the ER.\n\nThe real issue was a medication interaction — something the AI had no way of knowing without her full medical history.\n\n"The AI was just looking at words," her doctor explains. "I'm looking at her."\n\n<em>AI can suggest. Only a doctor can diagnose.</em>`
+        outcome: `Grandma Chen drinks more water and rests.\n\nTwo days later, she's in the ER.\n\nThe real issue: a medication interaction her regular doctor would have caught immediately. The AI had no access to her medication list, her history, or her chart.\n\n"The AI was reading words," her doctor explains. "I'm reading her."\n\nFor rural families in Connecticut, the distance to care is a real barrier. But using AI as a substitute for a doctor is a different kind of danger.\n\n<em>AI can suggest. Only a doctor can diagnose.</em>`
       },
       {
-        text: "Use the AI to research her symptoms and prepare specific questions for the doctor.",
+        text: "Use the AI to research her symptoms, then call the clinic with specific questions.",
         points: 3,
-        outcome: `The family uses the symptom checker to make a list: "What could cause these symptoms together? What should we ask the doctor to rule out?"\n\nThey call the clinic and explain the specific combination of symptoms. The nurse schedules an urgent callback.\n\nThe doctor identifies the issue quickly — partly because the family asked exactly the right questions.\n\n"You came prepared," the doctor says. "That helped a lot."\n\n<em>AI as preparation, not as a replacement.</em>`
+        outcome: `You use the symptom checker not for an answer, but for a list.\n\n"What medication interactions cause stomach pain in people over 70? What symptoms mean it's urgent?"\n\nYou call the clinic and describe the specific combination — not just 'stomach hurts.' The nurse schedules a callback within the hour.\n\nThe doctor catches a medication interaction over the phone. She adjusts Grandma's prescription.\n\n"You asked exactly the right questions," the doctor says. "That made this easy to catch."\n\n<em>AI as preparation — not as a replacement.</em>`
       },
       {
-        text: "Ignore AI entirely — wait three weeks for the appointment no matter what.",
+        text: "Ignore the AI entirely. Wait three weeks for the scheduled appointment.",
         points: 1,
-        outcome: `"Let's just wait for the real doctor," the family decides.\n\nThe three weeks pass. Grandma gets checked out — and it turns out the symptoms were significant. Earlier attention would have caught things sooner.\n\n"You should have called us," the nurse says. "We have a phone line for a reason."\n\nFor rural families, accessing care is hard. Refusing every tool that might help isn't caution — it's a different kind of risk.\n\n<em>The goal isn't avoiding AI. It's using every resource wisely.</em>`
+        outcome: `"We should just wait for the real doctor," you decide.\n\nThree weeks later, the appointment happens. The issue is caught — but later than it should have been.\n\n"You could have called us," the nurse says. "We have a phone line for exactly this."\n\nRefusing every tool in reach isn't caution. For rural families in Connecticut, getting help means using every available resource wisely — including AI as a starting point.\n\n<em>The goal isn't avoiding AI. It's knowing what it's actually for.</em>`
       }
     ]
   },
-
+ 
   /* ── SCENARIO 5: LOCAL BUSINESS ── */
   {
     id: 5,
     title: "MAIN STREET SHOP",
     location: "📍 SOUTH WINDSOR, CT",
-    speaker: "OWNER MEL",
-    dialogue: "My shop gets 200 emails a week. Half are 'what are your hours?' I can't keep up — but I also can't lose that personal connection.",
-    desc: "Mel owns a hardware store on South Windsor's Main Street. A tech consultant is pitching an AI customer service system.",
+    speaker: "MEL (SHOP OWNER)",
+    context: "Sullivan's Hardware, South Windsor. Est. 1987. 200+ customer emails per week.",
+    dialogue: "Half my inbox is 'what time do you close' and 'do you carry X.' I spend three hours a day on email. But this shop runs on relationships — people come here because they know me.",
+    exchange: [
+      { type: "b", who: "TECH REP", line: "Our AI handles routine questions automatically. You'd save 10 hours a week." },
+      { type: "a", who: "MEL", line: "And when someone needs real advice about a leaky pipe at 6 PM on a Friday?" },
+      { type: "b", who: "TECH REP", line: "The AI can handle that too, actually." },
+      { type: "narrator", line: "Mel isn't sure that's a selling point." }
+    ],
     scene: "shop",
     choices: [
       {
-        text: "Use AI for routine questions (hours, location, inventory). Keep Mel for the rest.",
+        text: "Use AI for routine questions only — hours, location, basic stock. Mel handles everything else.",
         points: 3,
-        outcome: `The AI handles 140 of the 200 weekly emails: hours, directions, basic stock questions.\n\nMel now has time to actually respond to the 60 that need a human: the contractor with a tricky custom order, the neighbor who calls every spring about fertilizer.\n\nSales tick up. Customer ratings improve. One longtime customer writes: "Mel finally has time to actually talk to you."\n\n<em>Automation freed the human to be more human.</em>`
+        outcome: `The AI fields 140 of the 200 weekly emails: hours, directions, stock questions.\n\nMel now has time for the 60 that actually need a human — the contractor with a tricky order, the neighbor who calls every spring about soil.\n\nSales tick up slightly. One longtime customer writes a review: "Mel finally has time to actually talk to you when you come in."\n\nIn South Windsor, small businesses survive on exactly that. The automation freed the human to be more human.\n\n<em>The tool handled the routine so Mel could handle the rest.</em>`
       },
       {
-        text: "Replace all customer interaction with AI. It's more efficient.",
+        text: "Go all in — let the AI handle every customer interaction. Maximum efficiency.",
         points: 0,
-        outcome: `Every email now gets an AI reply. Fast, accurate, efficient.\n\nBut something changes. People stop feeling like they're talking to Mel's. They're talking to a chatbot.\n\nThe hardware store down the highway has the same prices and a chatbot too. South Windsor shoppers start going there instead.\n\nThe thing that made Mel's special — Mel — has been automated away.\n\n<em>Efficiency is worthless if it deletes your value.</em>`
+        outcome: `Every email gets an AI reply. Fast. Accurate. Efficient.\n\nBut something changes. People stop feeling like they're talking to Sullivan's. They're talking to a chatbot.\n\nThe hardware chain on the highway has the same prices and a better AI. South Windsor customers start going there instead.\n\nThe thing that made Sullivan's special — Mel — got automated away.\n\nFran Rabinowitz, head of CT school superintendents, once said AI is like the calculator: you can't fight it. But nobody replaced math teachers with calculators.\n\n<em>Efficiency is worthless if it deletes what you were selling.</em>`
       },
       {
-        text: "Reject AI entirely. Answer everything personally, even if it takes hours.",
+        text: "Reject AI entirely. Mel answers every single email personally, no matter how long it takes.",
         points: 1,
-        outcome: `Mel spends four hours a day on email. The shop floor suffers. Mel is exhausted.\n\nTwo good employees leave because Mel is too stressed to manage well. A big contractor order gets missed because Mel was buried in "what time do you close?" emails.\n\nNobody said Mel had to answer every email personally to have a personal shop.\n\n<em>Pride in doing it yourself has a cost. Make sure it's worth it.</em>`
+        outcome: `Mel spends four hours a day on email. The shop floor suffers.\n\nTwo good part-time employees leave — Mel is too stretched thin to manage well. A big contractor order falls through because Mel was buried in "do you carry 3/4-inch copper fittings?" at 9 PM.\n\nNobody said Mel has to automate everything to use a tool. And nobody said answering every email personally makes the shop more personal.\n\n<em>Refusing the tool has a cost too. Make sure you've counted it.</em>`
       }
     ]
   }
 ];
-
+ 
 /* ================================================================
    ENDINGS — based on total score (0–15)
 ================================================================ */
@@ -719,29 +775,29 @@ const ENDINGS = [
   {
     min: 13,
     rank: "★★★ DIGITAL NAVIGATOR ★★★",
-    msg: "You used AI the way it's meant to be used — as a tool that amplifies what humans can do, not a replacement for thinking. You caught the shortcuts for what they were. You asked better questions. You made the AI work for you.",
-    ct: "Students like you are why Connecticut educators are optimistic about AI in schools.\nThe future of AI in Connecticut isn't about who has the best chatbot.\nIt's about who knows how to use one wisely."
+    msg: "You used AI the way it's designed to be used — as a tool that amplifies what humans can do, not a replacement for thinking. You caught the shortcuts for what they were. You asked better questions. You made the AI work for you.",
+    ct: "South Windsor rolled out Magic School so students could have a\n24/7 tutor — not a ghostwriter.\nStudents like you are exactly why that bet pays off.\nConnecticut's classrooms are counting on this kind of judgment."
   },
   {
     min: 9,
     rank: "★★ GETTING THERE ★★",
-    msg: "You got a lot right. You saw the value in AI tools — but a few times, the easy path looked more tempting than it should have. The difference between a good AI user and a great one is recognizing which shortcuts cost more than they save.",
-    ct: "Connecticut schools like Timothy Edwards are building exactly this kind of judgment.\nKeep practicing — the stakes will only get higher."
+    msg: "You got a lot right. You saw the value in tools like Magic School — but a few times, the easy path looked more tempting than it should have. The difference between a good AI user and a great one is catching which shortcuts cost more than they save.",
+    ct: "Ed Duclos at South Windsor High said the goal is for AI\nto redefine what's possible in classrooms — not just substitute\nfor what students were already doing.\nYou're almost there. Play again."
   },
   {
     min: 5,
     rank: "★ RISKY CHOICES ★",
-    msg: "Some of your choices worked out okay. Others led to real consequences — a failed project, a wrong diagnosis, a lost customer base. AI is powerful, and powerful tools have powerful failure modes when misused.",
-    ct: "Here in Connecticut, teachers are worried about students who lean on AI without understanding it.\nYou now know what those teachers are worried about.\nPlay again — you know more than you did."
+    msg: "Some choices worked out okay. Others led to real consequences — a flagged essay, a fractured group, a wrong diagnosis. AI is powerful, and powerful tools have powerful failure modes when misused.",
+    ct: "Connecticut educators like Duclos argue AI should be introduced\nin schools so students learn responsible use — not left to\nfigure it out alone.\nYou now know what they're worried about. Play again."
   },
   {
     min: 0,
     rank: "⚠ GAME OVER ⚠",
     msg: "Almost every shortcut led somewhere bad. The essay got flagged. Grandma went to the ER. The shop lost its soul. AI didn't cause those outcomes — the choices did. The tool is only as good as the judgment behind it.",
-    ct: "The argument of this game isn't 'AI is dangerous.'\nIt's: AI used without understanding is.\nPlay again. Connecticut's classrooms are counting on students who get this right."
+    ct: "South Windsor didn't block AI when ChatGPT arrived.\nThey chose to teach it instead.\nThat only works if students choose to learn it.\nPlay again. Connecticut is counting on you."
   }
 ];
-
+ 
 /* ================================================================
    PIXEL ART SCENE RENDERERS
    Each draws a simple 8-bit scene on the scene canvas
@@ -782,7 +838,7 @@ const SCENE_RENDERERS = {
     // Student silhouette
     drawSilhouette(ctx, 340, h-24, '#2a3a2a');
   },
-
+ 
   classroom: (ctx, w, h) => {
     ctx.fillStyle = '#0a1020'; ctx.fillRect(0,0,w,h);
     // Wall
@@ -807,7 +863,7 @@ const SCENE_RENDERERS = {
       drawSilhouette(ctx, 145+d*180, h-30, ['#203820','#182818','#2a3020'][d]);
     }
   },
-
+ 
   study: (ctx, w, h) => {
     ctx.fillStyle = '#080f08'; ctx.fillRect(0,0,w,h);
     // Ceiling light
@@ -834,7 +890,7 @@ const SCENE_RENDERERS = {
     // Silhouette
     drawSilhouette(ctx, 340, h-30, '#182820');
   },
-
+ 
   rural: (ctx, w, h) => {
     // Sky
     const sky = ctx.createLinearGradient(0,0,0,h*0.6);
@@ -865,7 +921,7 @@ const SCENE_RENDERERS = {
       ctx.fillStyle='#2a6a0a'; ctx.fillRect(x-10,y-36,20,20);
     });
   },
-
+ 
   shop: (ctx, w, h) => {
     ctx.fillStyle = '#0f0f0f'; ctx.fillRect(0,0,w,h);
     // Storefront
@@ -896,7 +952,7 @@ const SCENE_RENDERERS = {
     drawSilhouette(ctx, 545, h-30, '#1a1a2a');
   }
 };
-
+ 
 function drawSilhouette(ctx, cx, groundY, color) {
   // Simple 8-bit person silhouette
   ctx.fillStyle = color;
@@ -911,7 +967,7 @@ function drawSilhouette(ctx, cx, groundY, color) {
   ctx.fillRect(cx-9, groundY-14, 8, 14);
   ctx.fillRect(cx+1, groundY-14, 8, 14);
 }
-
+ 
 /* ================================================================
    TILE BACKGROUND
 ================================================================ */
@@ -931,7 +987,7 @@ function drawTileBackground(canvas) {
     ctx.fillRect(Math.floor(Math.random()*w/4)*4, Math.floor(Math.random()*h/4)*4, 4, 4);
   }
 }
-
+ 
 /* ================================================================
    TITLE SPRITE
 ================================================================ */
@@ -980,7 +1036,7 @@ function drawTitleSprite(canvas) {
   // Arrow between
   ctx.fillStyle='#f5d742';
   ctx.fillRect(100,34,6,6); ctx.fillRect(106,36,4,2); ctx.fillRect(110,34,6,6);
-
+ 
   // Label under
   ctx.fillStyle='#4db84d';
   ctx.font='7px "Press Start 2P", monospace';
@@ -988,7 +1044,7 @@ function drawTitleSprite(canvas) {
   ctx.fillStyle='#e8f8e8';
   ctx.fillText('YOU', 118, 76);
 }
-
+ 
 /* ================================================================
    GAME STATE
 ================================================================ */
@@ -997,7 +1053,7 @@ let state = {
   scores: [],
   choicesMade: []
 };
-
+ 
 /* ================================================================
    SCREEN MANAGEMENT
 ================================================================ */
@@ -1005,7 +1061,7 @@ function showScreen(id) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.getElementById('screen-' + id).classList.add('active');
 }
-
+ 
 /* ================================================================
    INIT
 ================================================================ */
@@ -1014,14 +1070,14 @@ window.onload = function() {
   const bgCanvas = document.getElementById('bg-canvas');
   bgCanvas.width = 640; bgCanvas.height = 600;
   drawTileBackground(bgCanvas);
-
+ 
   // Title sprite
   const ts = document.getElementById('title-sprite-canvas');
   drawTitleSprite(ts);
-
+ 
   showScreen('title');
 };
-
+ 
 /* ================================================================
    GAME FLOW
 ================================================================ */
@@ -1029,18 +1085,37 @@ function startGame() {
   state = { currentScenario: 0, scores: [], choicesMade: [] };
   loadScenario(0);
 }
-
+ 
 function loadScenario(idx) {
   const s = SCENARIOS[idx];
-
+ 
   // HUD
   document.getElementById('hud-scenario-label').textContent = `SCENARIO ${idx+1}/5`;
   document.getElementById('hud-title-label').textContent = s.title;
   document.getElementById('location-badge').textContent = s.location;
   document.getElementById('speaker-name').textContent = s.speaker;
   document.getElementById('dialogue-text').textContent = s.dialogue;
-  document.getElementById('scenario-desc').textContent = s.desc;
-
+ 
+  // Context line
+  const ctxEl = document.getElementById('scenario-context');
+  ctxEl.textContent = s.context || '';
+  ctxEl.style.display = s.context ? 'block' : 'none';
+ 
+  // Dialogue exchange
+  const exchEl = document.getElementById('dialogue-exchange');
+  exchEl.innerHTML = '';
+  if (s.exchange && s.exchange.length) {
+    s.exchange.forEach(e => {
+      const div = document.createElement('div');
+      div.className = 'exch-line ' + (e.type === 'a' ? 'speaker-a' : e.type === 'b' ? 'speaker-b' : 'narrator');
+      div.textContent = e.type === 'narrator' ? `— ${e.line}` : `${e.who}: ${e.line}`;
+      exchEl.appendChild(div);
+    });
+    exchEl.style.display = 'block';
+  } else {
+    exchEl.style.display = 'none';
+  }
+ 
   // Progress pips
   const pips = document.getElementById('progress-pips');
   pips.innerHTML = '';
@@ -1049,13 +1124,13 @@ function loadScenario(idx) {
     pip.className = 'pip' + (i < idx ? ' filled' : i === idx ? ' current' : '');
     pips.appendChild(pip);
   }
-
+ 
   // Scene canvas
   const sceneCanvas = document.getElementById('scene-canvas');
-  sceneCanvas.width = 640; sceneCanvas.height = 140;
+  sceneCanvas.width = 640; sceneCanvas.height = 110;
   const ctx = sceneCanvas.getContext('2d');
-  SCENE_RENDERERS[s.scene](ctx, 640, 140);
-
+  SCENE_RENDERERS[s.scene](ctx, 640, 110);
+ 
   // Choices
   const container = document.getElementById('choices-container');
   container.innerHTML = '';
@@ -1066,49 +1141,49 @@ function loadScenario(idx) {
     btn.onclick = () => makeChoice(idx, i);
     container.appendChild(btn);
   });
-
+ 
   showScreen('scenario');
 }
-
+ 
 function makeChoice(scenarioIdx, choiceIdx) {
   const scenario = SCENARIOS[scenarioIdx];
   const choice = scenario.choices[choiceIdx];
-
+ 
   state.scores.push(choice.points);
   state.choicesMade.push(choiceIdx);
-
+ 
   // Show outcome
   document.getElementById('outcome-scene-label').textContent = `SCENARIO ${scenarioIdx+1}: ${scenario.title}`;
   document.getElementById('outcome-text').innerHTML = choice.outcome.replace(/\n/g,'<br>');
-
+ 
   const continueBtn = document.getElementById('continue-btn');
   if(scenarioIdx === SCENARIOS.length - 1) {
     continueBtn.textContent = '▶ SEE FINAL SCORE';
   } else {
     continueBtn.textContent = '▶ CONTINUE';
   }
-
+ 
   showScreen('outcome');
 }
-
+ 
 function nextScenario() {
   const next = state.currentScenario + 1;
   state.currentScenario = next;
-
+ 
   if(next >= SCENARIOS.length) {
     showScore();
   } else {
     loadScenario(next);
   }
 }
-
+ 
 /* ================================================================
    SCORE SCREEN
 ================================================================ */
 function showScore() {
   const total = state.scores.reduce((a,b) => a+b, 0);
   const maxScore = SCENARIOS.length * 3;
-
+ 
   // Breakdown
   const breakdown = document.getElementById('score-breakdown');
   breakdown.innerHTML = '';
@@ -1121,21 +1196,22 @@ function showScore() {
     row.innerHTML = `<span class="scene-name">${i+1}. ${s.title}</span><span class="pts ${ptClass}">${ptLabel}</span>`;
     breakdown.appendChild(row);
   });
-
+ 
   document.getElementById('total-pts-display').textContent = `${total} / ${maxScore}`;
-
+ 
   // Ending
   const ending = ENDINGS.find(e => total >= e.min);
   document.getElementById('ending-rank').textContent = ending.rank;
   document.getElementById('ending-msg').textContent  = ending.msg;
   document.getElementById('ending-ct-line').textContent = ending.ct;
-
+ 
   showScreen('score');
 }
-
+ 
 function resetGame() {
   showScreen('title');
 }
 </script>
 </body>
 </html>
+ 
