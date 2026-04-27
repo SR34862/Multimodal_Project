@@ -476,6 +476,91 @@
   .play-again-btn:hover { background: var(--gb-lblue); animation: none; }
  
   /* ============================================================
+     WORKS CITED SCREEN
+  ============================================================ */
+  #screen-works { min-height: 500px; }
+ 
+  .works-title {
+    font-size: 9px;
+    color: var(--gb-yellow);
+    text-align: center;
+    margin-bottom: 4px;
+    text-shadow: 2px 2px 0 #7a6000;
+  }
+  .works-subtitle {
+    font-size: 6px;
+    color: var(--gb-green3);
+    text-align: center;
+    margin-bottom: 14px;
+    letter-spacing: 1px;
+  }
+  .works-divider {
+    width: 100%;
+    height: 3px;
+    background: repeating-linear-gradient(90deg, var(--gb-green2) 0 8px, transparent 8px 16px);
+    margin-bottom: 14px;
+  }
+  .works-section-label {
+    font-size: 6px;
+    color: var(--gb-green4);
+    margin-bottom: 8px;
+    letter-spacing: 1px;
+    border-left: 3px solid var(--gb-green3);
+    padding-left: 7px;
+  }
+  .works-entry {
+    background: #050f05;
+    border: 2px solid var(--gb-green2);
+    padding: 10px 12px;
+    margin-bottom: 10px;
+  }
+  .works-citation {
+    font-size: 6px;
+    color: var(--gb-lgray);
+    line-height: 2.4;
+    /* MLA hanging indent via padding trick */
+    padding-left: 16px;
+    text-indent: -16px;
+  }
+  .works-citation .cite-author { color: var(--gb-white); }
+  .works-citation .cite-url    { color: var(--gb-lblue); word-break: break-all; }
+  .works-note {
+    font-size: 5px;
+    color: var(--gb-gray);
+    line-height: 2;
+    margin-top: 6px;
+    padding: 6px 8px;
+    border-top: 1px dashed var(--gb-green1);
+    font-style: italic;
+  }
+  .interview-box {
+    background: #050f05;
+    border: 2px solid var(--gb-green2);
+    padding: 10px 12px;
+    margin-bottom: 10px;
+  }
+  .interview-box .interview-label {
+    font-size: 6px;
+    color: var(--gb-yellow);
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .interview-box .interview-label::before {
+    content: '■';
+    color: var(--gb-yellow);
+  }
+  .interview-influence {
+    font-size: 5px;
+    color: var(--gb-lgray);
+    line-height: 2.2;
+    margin-bottom: 4px;
+  }
+  .interview-influence .inf-q  { color: var(--gb-green4); }
+  .interview-influence .inf-arrow { color: var(--gb-gray); }
+ 
+  /* ============================================================
      ANIMATIONS
   ============================================================ */
   @keyframes blink {
@@ -525,7 +610,7 @@
         5 SCENARIOS &nbsp;·&nbsp; REAL CONSEQUENCES<br>
         SOUTH WINDSOR, CONNECTICUT<br>
         &nbsp;<br>
-        AI CAN HELP BUT HOW YOU<br>
+        AI CAN HELP, BUT HOW YOU<br>
         USE IT CHANGES EVERYTHING.
       </div>
       <button class="continue-btn blink-text" onclick="startGame()" style="max-width:260px;margin-top:4px;">
@@ -586,6 +671,58 @@
         <div class="ending-ct-line" id="ending-ct-line"></div>
       </div>
       <button class="play-again-btn" onclick="resetGame()">↺ PLAY AGAIN</button>
+      <button class="continue-btn" onclick="showScreen('works')" style="margin-top:8px;font-size:6px;background:#0a1a0a;border-color:var(--gb-green2);color:var(--gb-green3);">📄 WORKS CITED &amp; CREDITS</button>
+    </div>
+  </div>
+ 
+  <!-- ═══════════════════════ WORKS CITED SCREEN ═══════════════════════ -->
+  <div id="screen-works" class="screen">
+    <div class="screen-content">
+      <div class="works-title">WORKS CITED</div>
+      <div class="works-subtitle">— SOURCES &amp; INTERVIEW —</div>
+      <div class="works-divider"></div>
+ 
+      <div class="works-section-label">PUBLISHED SOURCES</div>
+ 
+      <div class="works-entry">
+        <div class="works-citation">
+          <span class="cite-author">Joas, Jennifer.</span>
+          "How South Windsor students are using AI in the classroom."
+          <em>NBC CT</em>, 16 Apr. 2025,
+          <span class="cite-url">www.nbcconnecticut.com/news/local/how-south-windsor-students-are-using-ai-in-the-classroom/3545059/</span>.
+          Accessed 5 Apr. 2026.
+        </div>
+      </div>
+ 
+      <div class="works-divider"></div>
+      <div class="works-section-label">PRIMARY INTERVIEW</div>
+ 
+      <div class="interview-box">
+        <div class="interview-label">TEMS TEACHER PERSONAL INTERVIEW</div>
+        <div class="interview-influence">
+          <span class="inf-q">"Students who struggle with English or don't have reliable technology could be left behind."</span>
+          <br><span class="inf-arrow">→</span> Shaped Scenario 3: the equity angle in the test-prep outcome, and the score screen's reminder that AI access isn't equal.
+        </div>
+        <div class="interview-influence">
+          <span class="inf-q">"Responsible use means using AI to understand something better, not to skip the understanding altogether."</span>
+          <br><span class="inf-arrow">→</span> Became the backbone of Scenario 1 and 3 choices — brainstorm vs. copy, Socratic tutor vs. worksheet answers.
+        </div>
+        <div class="interview-influence">
+          <span class="inf-q">"Using it to create a project and calling it their own will undermine the whole point."</span>
+          <br><span class="inf-arrow">→</span> Drove Scenario 2: Marcus submitting AI work to the group without disclosure.
+        </div>
+        <div class="interview-influence">
+          <span class="inf-q">"It's on teachers to design assignments that challenge their own brains, not an AI's."</span>
+          <br><span class="inf-arrow">→</span> Referenced in Scenario 3 outcome — the test questions are worded differently from the worksheet on purpose.
+        </div>
+        <div class="interview-influence">
+          <span class="inf-q">"The skills you build by actually working through problems is the main point of school."</span>
+          <br><span class="inf-arrow">→</span> Appears almost verbatim in the top-tier ending message.
+        </div>
+        <div class="works-note">Interview conducted with Jesse Wilkinson, a Timothy Edwards Middle School Technnology Education teacher, South Windsor, CT. Quoted with permission. </div>
+      </div>
+ 
+      <button class="continue-btn" onclick="showScreen('score')" style="margin-top:4px;font-size:7px;">← BACK TO SCORE</button>
     </div>
   </div>
  
@@ -605,28 +742,29 @@ const SCENARIOS = [
     location: "📍 TEMS LIBRARY",
     speaker: "ALEX",
     context: "7th grade, Timothy Edwards Middle School. 9:14 PM. Essay due tomorrow.",
-    dialogue: "Okay. American Revolution essay. 500 words. Due at 8 AM. I've got Magic School open on one tab and a blank doc on the other.",
+    dialogue: "Okay. American Revolution essay. 500 words. Due 1st period tomorrow. I've got Magic School open on one tab and a blank doc on the other.",
     exchange: [
       { type: "b", who: "FRIEND (text)", line: "just use it to write the whole thing lol" },
-      { type: "a", who: "ALEX", line: "...but Mr. Duclos literally told us today that's not the point." },
-      { type: "narrator", line: "The cursor blinks. What do you do?" }
+      { type: "a", who: "ALEX", line: "but isn't that... just submitting AI work as my own?" },
+      { type: "b", who: "FRIEND", line: "bro it's 10 PM. who cares." },
+      { type: "narrator", line: "The cursor blinks on the blank doc. What do you do?" }
     ],
     scene: "library",
     choices: [
       {
         text: "Tell Magic School: 'Write me a 500-word essay on the American Revolution.' Copy. Paste. Submit.",
         points: 0,
-        outcome: `The essay comes back polished. Confident. Maybe a little too confident for a 7th grader.\n\nMrs. Engel has read thousands of student essays. She flags it the next morning: "This doesn't sound like you, Alex. At all."\n\nAlex gets a zero. A note goes home. And Alex never actually learned anything about the Revolution.\n\n<em>The shortcut became the longest route.</em>`
+        outcome: `The essay comes back polished. Maybe too polished for a 7th grader who started at 9 PM.\n\nMrs. Engel has read thousands of student essays. She notices it immediately: "This doesn't sound like you at all Alex. "\n\nZero. Note home. And Alex never actually learned anything about the Revolution.\n\nA TEMS teacher put it plainly: using AI to create an assignment and calling it your own "undermines the whole point."\n\n<em>The shortcut became the longest route.</em>`
       },
       {
-        text: "Use Magic School to brainstorm three arguments, build an outline, then write it yourself.",
+        text: "Use Magic School to brainstorm three arguments and build an outline. Then write it yourself.",
         points: 3,
-        outcome: `Alex types: "Give me three reasons the colonists had for revolting. Don't write the essay — just give me ideas to work with."\n\nMagic School fires back options. Alex picks two, sketches an outline, and starts writing in their own words.\n\nIt takes until 11 PM. The essay isn't perfect — but it's Alex's voice and Alex's thinking.\n\nMrs. Engel gives it a B+. "Good structure. I can tell you actually engaged with this material."\n\n<em>The AI was a scaffold — not the building.</em>`
+        outcome: `Alex types: "Give me three reasons the colonists revolted. Don't write the essay, just give me starting points."\n\nMagic School fires back ideas. Alex picks two, sketches an outline, and writes in their own words until 11 PM.\n\nMrs. Engel gives it a B+. "Good structure. I can tell you actually engaged with this."\n\nThat's what responsible use looks like, according to the teachers at TEMS: using AI to get started, instead of having it do the assignment entirely.\n\n<em>The AI was a tool to learn, not to cheat.</em>`
       },
       {
-        text: "Close the laptop. Push through it completely alone until midnight.",
-        points: 1,
-        outcome: `Alex goes it alone. Three hours later: a tired, disorganized C+ essay.\n\nOn the bus the next morning, Alex thinks: "I could've used the AI just to get unstuck on the intro. That would've been fine, right?"\n\nMr. Duclos once said: "The tool exists. The question is whether you're using it to think, or using it to avoid thinking."\n\nAvoiding AI entirely isn't automatically the honest choice. Sometimes it's just a harder version of the same mistake.\n\n<em>Working harder isn't the same as working smarter.</em>`
+        text: "Write the essay yourself first, then use Magic School to check it against the rubric.",
+        points: 3,
+        outcome: `Alex writes a rough draft, not amazing but a good start.\n\nThen: "Here's my essay and the rubric. What am I missing? Don't rewrite it, just tell me what to improve."\n\nMagic School flags a weak thesis and a missing counterargument. Alex fixes both.\n\nMrs. Engel gives it an A-. "This is exactly the kind of revision I wanted to see."\n\nA TEMS teacher called this the best-case use of AI: letting it grade your work based on a rubric so you understand it better, not hand it to you.\n\n<em>The thinking was Alex's, and the AI improved it.</em>`
       }
     ]
   },
@@ -637,30 +775,30 @@ const SCENARIOS = [
     title: "GROUP PROJECT",
     location: "📍 TEMS SCIENCE HALL",
     speaker: "JORDAN",
-    context: "Group project due in 2 days. Marcus just sent his research section over group chat.",
-    dialogue: "I'm reading Marcus's section and... this is definitely AI. Like, word-for-word ChatGPT. He didn't write a single sentence.",
+    context: "Group project due in 2 days. TEMS has no formal AI policy yet, so teachers handle it case-by-case.",
+    dialogue: "I'm reading Marcus's section and... this is definitely AI. Like, word-for-word ChatGPT. He didn't write a single sentence of it.",
     exchange: [
       { type: "narrator", line: "Everyone else spent their weekend on this." },
       { type: "b", who: "PRIYA", line: "Does it matter? It looks fine. Just use it." },
-      { type: "a", who: "JORDAN", line: "It matters to me. And it'll matter to Mrs. Bukhari." },
-      { type: "narrator", line: "The group is waiting for you to decide." }
+      { type: "a", who: "JORDAN", line: "It matters. Submitting someone else's work, even AI's, as your own is the whole problem." },
+      { type: "narrator", line: "The group is waiting for a decision." }
     ],
     scene: "classroom",
     choices: [
       {
         text: "Stay quiet. Include it. The project needs the pages.",
         points: 0,
-        outcome: `The project gets submitted. It looks solid.\n\nBut Mrs. Bukhari uses the district's AI-detection tool — the same one South Windsor rolled out this year alongside Magic School.\n\n"I don't think everyone wrote this," he says. The whole group gets flagged. Reduced grades across the board — even for the people who worked hard.\n\nMarcus shrugs. Jordan is furious.\n\n<em>Silence made you responsible too.</em>`
+        outcome: `The project gets submitted. It looks solid.\n\nBut Mr. Burrus uses the district's AI-detection tool, the same one South Windsor rolled out this year alongside Magic School.\n\n"I don't think everyone wrote this," he says. The whole group gets caught. Points taken off for everyone, even for the people who worked hard.\n\nMarcus shrugs. Jordan is furious.\n\n<em>Silence made you responsible too.</em>`
       },
       {
         text: "Text Marcus privately: redo it yourself, or we tell the teacher together.",
         points: 3,
-        outcome: `Marcus gets defensive at first. "It's not a big deal. Everyone does it."\n\n"South Windsor literally has a whole AI policy now," Jordan says. "If this gets flagged it takes all of us down."\n\nMarcus goes quiet. Then: "Fine. I'll rewrite it tonight. For real this time."\n\nYou two go to Mrs. Bukhari anyway — just to be upfront. He appreciates it. Marcus gets a short extension and rewrites the section.\n\nThe final project reflects what everyone actually did.\n\n<em>Accountability is uncomfortable. It's also how trust works.</em>`
+        outcome: `Marcus gets defensive at first. "It's not a big deal. Everyone does it."\n\n"South Windsor literally has a whole AI policy now," Jordan says. "If this gets flagged it takes all of us down."\n\nMarcus goes quiet. Then: "Fine. I'll rewrite it tonight. For real this time."\n\nYou two go to Mr. Burrus anyway, just to be honest. He appreciates it. Marcus gets a short extension and rewrites the section.\n\nThe final project reflects what everyone actually did.\n\n<em>Accountability can be uncomfortable, but it creates trust. </em>`
       },
       {
         text: "Delete Marcus's section. Tell the group he never submitted anything.",
         points: 1,
-        outcome: `You pull the section. The project goes in thin in one area.\n\nMarcus finds out and is furious. The group is fractured for weeks.\n\nAnd you told a half-truth — Marcus's name was never on it, technically. But you erased someone's work, even bad work, without telling them.\n\nThe project is fine. The group isn't.\n\n<em>There was a harder, more honest path you chose not to take.</em>`
+        outcome: `You delete the section. The project goes in thin in one area.\n\nMarcus finds out and is furious. The group is fractured for weeks.\n\nAnd you told a half-truth, Marcus's name was never on it, technically. But you erased someone's work, even bad work, without telling them.\n\nThe project is fine. The group isn't.\n\n<em>There was a harder, but more honest path you chose not to take.</em>`
       }
     ]
   },
@@ -671,30 +809,31 @@ const SCENARIOS = [
     title: "TEST PREP",
     location: "📍 TEMS STUDY ROOM 4",
     speaker: "RILEY",
-    context: "Connecticut history test tomorrow. Teacher set up Magic Student as a tutor for tonight.",
-    dialogue: "This Magic Student thing keeps asking me questions back instead of just telling me the answers. 'Why do YOU think the Hartford Convention mattered?' I don't KNOW, that's why I'm asking.",
+    context: "Connecticut history test tomorrow and the teacher set up Magic School as a tutor.",
+    dialogue: "This Magic Student thing won't just tell me the answers. It keeps asking ME questions back. 'What do you already know about the Hartford Convention?' I don't know, that's the why I'm asking.",
     exchange: [
-      { type: "narrator", line: "The teacher's instructions: 'Use it as a tutor, not a cheat sheet.'" },
-      { type: "b", who: "MAGIC STUDENT", line: "What do you already know about the convention? Start there." },
-      { type: "a", who: "RILEY", line: "I know I'm going to fail this test if it doesn't just tell me." },
-      { type: "narrator", line: "There's a regular AI tab open in the next window." }
+      { type: "narrator", line: "Riley's friend Dani has a different setup. No restrictions, just answers." },
+      { type: "b", who: "DANI", line: "I already finished the worksheet. Regular ChatGPT, two minutes." },
+      { type: "a", who: "RILEY", line: "But do you actually know it now?" },
+      { type: "b", who: "DANI", line: "I know I'm done. That's enough." },
+      { type: "narrator", line: "Another tab is one click away." }
     ],
     scene: "study",
     choices: [
       {
-        text: "Switch to a regular AI. Copy all the practice worksheet answers and call it done.",
+        text: "Switch to regular ChatGPT. Copy all the practice worksheet answers and call it done.",
         points: 0,
-        outcome: `Twelve minutes. Done. Riley feels ready.\n\nTest day. The questions are worded differently from the worksheet — they need actual understanding.\n\nRiley blanks on question after question. "I knew these," Riley thinks.\n\nBut Riley knew the answers someone else figured out. That's different from knowing the material.\n\nMr. Duclos once described Magic Student's approach as making students "think out loud until it sticks." Riley bypassed exactly that.\n\n<em>The shortcut didn't go where Riley thought it did.</em>`
+        outcome: `Five minutes and done. Riley feels ready, like Dani said.\n\nTest day. The questions are worded differently from the worksheet. They need real understanding.\n\nRiley keeps leaving the questions blank. "I knew these answers..."\n\nBut Riley knew the answers someone else figured out. That's different from knowing the material.\n\nA TEMS teacher described exactly this type of student: "They just want to get the grade and move on, and they let AI take care of all the work."\n\n<em>The shortcut didn't go where Riley thought it did.</em>`
       },
       {
-        text: "Stay with Magic Student. It's annoying, but push through the questions.",
+        text: "Stay with Magic School. It's frustrating, but keep going.",
         points: 3,
-        outcome: `"Okay — the Hartford Convention. Colonists were upset about the War of 1812..."\n\n"Close," Magic Student replies. "But which colonists, and what exactly were they threatening?"\n\nRiley gets it wrong twice. Gets it right the third time. And this time it sticks — because Riley had to actually retrieve it.\n\nTest day. The questions are hard, but Riley recognizes the concepts.\n\nB+. The teacher writes in the margin: "Strong analysis."\n\nThat's the thing about the Socratic approach: the friction is the learning.\n\n<em>The frustration was the point.</em>`
+        outcome: `"Okay, the Hartford Convention. The New England states were angry about the War of 1812..."\n\n"Close. Which states, and what were they actually threatening to do?"\n\nRiley gets it wrong twice. Right the third time. And it sticks, because Riley had to actually retrieve it.\n\nTest day. Hard questions. But Riley recognizes the concepts, because Riley experienced them the night before.\n\nB+. "Strong analysis," the teacher writes.\n\nThe teacher who set up Magic School wanted exactly this: AI that builds understanding, not one that skips it.\n\n<em>The frustration was the point.</em>`
       },
       {
-        text: "Tell Magic Student to go easier — use it to confirm what you already know.",
+        text: "Tell Magic Student to go easier, use it to confirm what you think you already know.",
         points: 1,
-        outcome: `The tutor backs off. Riley breezes through the easier questions.\n\nComfortable. But not prepared.\n\nThe test has harder framing than the easy warmups Riley practiced on. Score: C.\n\nNot a disaster. But Riley knows: the annoying hard questions from before weren't random. They were the ones that were going to be on the test.\n\n<em>Right tool. Wrong setting.</em>`
+        outcome: `The tutor backs off. Riley breezes through warmup questions.\n\nComfortable. Not prepared.\n\nThe test has harder framing. Grade: C.\n\nShe didn't fail, but Riley knows the annoying hard questions were there for a reason.\n\nNote: Dani got a D+ using the regular AI. The worksheet answers and the test questions weren't the same thing.\n\n<em>Right tool. Wrong setting.</em>`
       }
     ]
   },
@@ -706,7 +845,7 @@ const SCENARIOS = [
     location: "📍 STAFFORD SPRINGS, CT",
     speaker: "GRANDMA CHEN",
     context: "Rural Tolland County. Nearest specialist: 42 miles. Next appointment: 3 weeks out.",
-    dialogue: "I don't want to make a fuss. It's probably nothing. But my stomach has felt wrong for four days and I can't sleep.",
+    dialogue: "I don't want to make a fuss. It's probably nothing. But my stomach has felt weird for four days and I can't sleep.",
     exchange: [
       { type: "narrator", line: "You open an AI symptom checker. It asks for her symptoms and age." },
       { type: "b", who: "AI CHECKER", line: "Based on your input: likely mild indigestion or stress." },
@@ -716,19 +855,19 @@ const SCENARIOS = [
     scene: "rural",
     choices: [
       {
-        text: "Trust the AI result. It says she's probably fine — no need to call the clinic.",
+        text: "Trust the AI result. It says she's probably fine, no need to call the clinic.",
         points: 0,
-        outcome: `Grandma Chen drinks more water and rests.\n\nTwo days later, she's in the ER.\n\nThe real issue: a medication interaction her regular doctor would have caught immediately. The AI had no access to her medication list, her history, or her chart.\n\n"The AI was reading words," her doctor explains. "I'm reading her."\n\nFor rural families in Connecticut, the distance to care is a real barrier. But using AI as a substitute for a doctor is a different kind of danger.\n\n<em>AI can suggest. Only a doctor can diagnose.</em>`
+        outcome: `Grandma Chen drinks more water and rests.\n\nTwo days later, she's in the ER.\n\nThe real issue was a medication issue her regular doctor would have caught immediately. The AI had no access to her medication list, her medical history, or her chart.\n\n"The AI was reading words," her doctor explains. "I'm reading her."\n\nFor rural families in America, the distance to care is a real barrier. But using AI as a substitute for a doctor is a different kind of danger.\n\n<em>AI can give suggestions, but only a real doctor can diagnose.</em>`
       },
       {
         text: "Use the AI to research her symptoms, then call the clinic with specific questions.",
         points: 3,
-        outcome: `You use the symptom checker not for an answer, but for a list.\n\n"What medication interactions cause stomach pain in people over 70? What symptoms mean it's urgent?"\n\nYou call the clinic and describe the specific combination — not just 'stomach hurts.' The nurse schedules a callback within the hour.\n\nThe doctor catches a medication interaction over the phone. She adjusts Grandma's prescription.\n\n"You asked exactly the right questions," the doctor says. "That made this easy to catch."\n\n<em>AI as preparation — not as a replacement.</em>`
+        outcome: `You use the symptom checker for a list of possible causes instead of a single diagnosis.\n\n"What medication interactions cause stomach pain in people over 70? What symptoms mean it's urgent?"\n\nYou call the clinic and describe the specific combination, not just 'stomach hurts.' The nurse schedules a callback within the hour.\n\nThe doctor catches a medication interaction over the phone. She adjusts Grandma's prescription.\n\n"You asked exactly the right questions," the doctor says. "That made this easy to catch."\n\n<em>AI as preparation, not as a replacement.</em>`
       },
       {
         text: "Ignore the AI entirely. Wait three weeks for the scheduled appointment.",
         points: 1,
-        outcome: `"We should just wait for the real doctor," you decide.\n\nThree weeks later, the appointment happens. The issue is caught — but later than it should have been.\n\n"You could have called us," the nurse says. "We have a phone line for exactly this."\n\nRefusing every tool in reach isn't caution. For rural families in Connecticut, getting help means using every available resource wisely — including AI as a starting point.\n\n<em>The goal isn't avoiding AI. It's knowing what it's actually for.</em>`
+        outcome: `"We should just wait for the real doctor," you say.\n\nThree weeks later, the issue is caught during the appointment, but later than it should have been.\n\n"You could have called us," the nurse says. "We have a phone line for exactly this."\n\nRefusing every tool in reach isn't caution. For rural families in Connecticut, getting help means using every available resource wisely, including AI as a starting point.\n\n<em>The goal isn't to avoid AI but to use it properly.</em>`
       }
     ]
   },
@@ -739,8 +878,8 @@ const SCENARIOS = [
     title: "MAIN STREET SHOP",
     location: "📍 SOUTH WINDSOR, CT",
     speaker: "MEL (SHOP OWNER)",
-    context: "Sullivan's Hardware, South Windsor. Est. 1987. 200+ customer emails per week.",
-    dialogue: "Half my inbox is 'what time do you close' and 'do you carry X.' I spend three hours a day on email. But this shop runs on relationships — people come here because they know me.",
+    context: "Sullivan's Hardware, South Windsor. 200+ customer emails per week.",
+    dialogue: "Half my inbox is 'what time do you close' and 'do you carry X.' I spend three hours a day on email. But this shop runs on relationships, people come here because they know me.",
     exchange: [
       { type: "b", who: "TECH REP", line: "Our AI handles routine questions automatically. You'd save 10 hours a week." },
       { type: "a", who: "MEL", line: "And when someone needs real advice about a leaky pipe at 6 PM on a Friday?" },
@@ -750,19 +889,19 @@ const SCENARIOS = [
     scene: "shop",
     choices: [
       {
-        text: "Use AI for routine questions only — hours, location, basic stock. Mel handles everything else.",
+        text: "Use AI for routine questions only. Hours, location, basic stock, while Mel handles everything else.",
         points: 3,
-        outcome: `The AI fields 140 of the 200 weekly emails: hours, directions, stock questions.\n\nMel now has time for the 60 that actually need a human — the contractor with a tricky order, the neighbor who calls every spring about soil.\n\nSales tick up slightly. One longtime customer writes a review: "Mel finally has time to actually talk to you when you come in."\n\nIn South Windsor, small businesses survive on exactly that. The automation freed the human to be more human.\n\n<em>The tool handled the routine so Mel could handle the rest.</em>`
+        outcome: `The AI fields 140 of the 200 weekly emails: hours, directions, stock questions.\n\nMel now has time for the 60 that actually need a human. The contractor with a tricky order, the neighbor who calls every spring about soil.\n\nSales tick up slightly. One longtime customer writes a review: "Mel finally has time to actually talk to you when you come in."\n\nIn South Windsor, small businesses survive on exactly that. The automation freed the human to be more human.\n\n<em>The tool handled the routine so Mel could handle the rest.</em>`
       },
       {
-        text: "Go all in — let the AI handle every customer interaction. Maximum efficiency.",
+        text: "Go all in. Let the AI handle every customer interaction for maximum efficiency.",
         points: 0,
-        outcome: `Every email gets an AI reply. Fast. Accurate. Efficient.\n\nBut something changes. People stop feeling like they're talking to Sullivan's. They're talking to a chatbot.\n\nThe hardware chain on the highway has the same prices and a better AI. South Windsor customers start going there instead.\n\nThe thing that made Sullivan's special — Mel — got automated away.\n\nFran Rabinowitz, head of CT school superintendents, once said AI is like the calculator: you can't fight it. But nobody replaced math teachers with calculators.\n\n<em>Efficiency is worthless if it deletes what you were selling.</em>`
+        outcome: `Every email gets an AI reply. Fast, accurate, and efficient.\n\nBut something changed. People stop feeling like they're at Sullivan's. All they experience is a chatbot.\n\nThe hardware chain on the highway has the same prices and a better AI. South Windsor customers start going there instead.\n\nThe thing that made Sullivan's special — Mel — got automated away.\n\nFran Rabinowitz, head of CT school superintendents, once said AI is like the calculator: you can't fight it. But nobody replaced math teachers with calculators.\n\n<em>Efficiency is worthless if it take away from what makes you special.</em>`
       },
       {
         text: "Reject AI entirely. Mel answers every single email personally, no matter how long it takes.",
         points: 1,
-        outcome: `Mel spends four hours a day on email. The shop floor suffers.\n\nTwo good part-time employees leave — Mel is too stretched thin to manage well. A big contractor order falls through because Mel was buried in "do you carry 3/4-inch copper fittings?" at 9 PM.\n\nNobody said Mel has to automate everything to use a tool. And nobody said answering every email personally makes the shop more personal.\n\n<em>Refusing the tool has a cost too. Make sure you've counted it.</em>`
+        outcome: `Mel spends four hours a day on email. The shop floor suffers.\n\nTwo good part-time employees leave, and Mel is too stretched thin to manage well. A big contractor order falls through because Mel was buried in "do you carry 3/4-inch copper fittings?" at 9 PM.\n\nNobody said Mel has to automate everything to use a tool. And nobody said answering every email personally makes the shop more personal.\n\n<em>Refusing the tool has a cost too, make sure you've accounted for that as well.</em>`
       }
     ]
   }
@@ -775,26 +914,26 @@ const ENDINGS = [
   {
     min: 13,
     rank: "★★★ DIGITAL NAVIGATOR ★★★",
-    msg: "You used AI the way it's designed to be used — as a tool that amplifies what humans can do, not a replacement for thinking. You caught the shortcuts for what they were. You asked better questions. You made the AI work for you.",
-    ct: "South Windsor rolled out Magic School so students could have a\n24/7 tutor — not a ghostwriter.\nStudents like you are exactly why that bet pays off.\nConnecticut's classrooms are counting on this kind of judgment."
+    msg: "You used AI to understand things better, but not to skip the understanding. You saw the shortcuts for what they were. You made the tool work for you, not the other way around.",
+    ct: "A TEMS teacher said it best: 'The skills you build by\nactually working through problems is the main point of school.\nEven if AI can do the assignment for you, it cannot\nbuild those skills for you. And skills are what actually\nmatter in real life.'\n\nSouth Windsor is counting on students who already know this."
   },
   {
     min: 9,
     rank: "★★ GETTING THERE ★★",
-    msg: "You got a lot right. You saw the value in tools like Magic School — but a few times, the easy path looked more tempting than it should have. The difference between a good AI user and a great one is catching which shortcuts cost more than they save.",
-    ct: "Ed Duclos at South Windsor High said the goal is for AI\nto redefine what's possible in classrooms — not just substitute\nfor what students were already doing.\nYou're almost there. Play again."
+    msg: "You got a lot right. You saw the value in using AI responsibly. But a few times, the easy path looked more tempting than it should have. The difference between good and great is catching which shortcuts cost more than they save.",
+    ct: "South Windsor rolled out Magic School so every student\ncould have a 24/7 tutor, not a ghostwriter.\nBut the tool alone doesn't close the gap.\nHow you use it does.\n\nPlay again. You know more than you did."
   },
   {
     min: 5,
     rank: "★ RISKY CHOICES ★",
-    msg: "Some choices worked out okay. Others led to real consequences — a flagged essay, a fractured group, a wrong diagnosis. AI is powerful, and powerful tools have powerful failure modes when misused.",
-    ct: "Connecticut educators like Duclos argue AI should be introduced\nin schools so students learn responsible use — not left to\nfigure it out alone.\nYou now know what they're worried about. Play again."
+    msg: "Some choices worked out. Others led to real consequences: a flagged essay, a fractured group, a wrong diagnosis. AI is powerful, and powerful tools have powerful failures when misused.",
+    ct: "A TEMS teacher noted that students who struggle with\nEnglish or lack reliable tech at home could be left behind\nas AI spreads, but students who misuse it get left behind\nin a different way.\n\nPlay again. Connecticut's classrooms need you to get this right."
   },
   {
     min: 0,
     rank: "⚠ GAME OVER ⚠",
-    msg: "Almost every shortcut led somewhere bad. The essay got flagged. Grandma went to the ER. The shop lost its soul. AI didn't cause those outcomes — the choices did. The tool is only as good as the judgment behind it.",
-    ct: "South Windsor didn't block AI when ChatGPT arrived.\nThey chose to teach it instead.\nThat only works if students choose to learn it.\nPlay again. Connecticut is counting on you."
+    msg: "Almost every shortcut led somewhere bad. The essay got flagged. Grandma went to the ER. The shop lost its soul. AI didn't cause those outcomes, the choices did. The tool is only as good as the judgment behind it.",
+    ct: "South Windsor didn't ban AI when ChatGPT arrived.\nThey chose to teach it instead, and the consequences it could have.\nThat only works if students choose to learn it.\n\nPlay again."
   }
 ];
  
